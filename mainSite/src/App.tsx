@@ -1,5 +1,5 @@
-import { HayfelSpacePage } from './pages/hayfel-space/HayfelSpacePage'
+import { VoidPage } from './pages/void-exe/VoidPage'
 
 export default function App() {
-  return <HayfelSpacePage />
+  return <VoidPage />
 }
