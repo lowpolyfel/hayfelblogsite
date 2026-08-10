@@ -29,4 +29,6 @@ export const iconPaths = {
   lock: <><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></>,
   flame: <path d="M12 2c1 3-3 4-3 8a4 4 0 0 0 8 0c0-2-1-3-1-3s1 4-2 4-2-3 0-5c1-1 1-3-2-4z" />,
   home: <><path d="M4 11 12 4l8 7" /><path d="M6 10v10h12V10" /></>,
+  menu: <><path d="M4 6h16M4 12h16M4 18h16" /></>,
+  search: <><circle cx="10" cy="10" r="7" /><path d="m21 21-4.3-4.3" /></>,
 }

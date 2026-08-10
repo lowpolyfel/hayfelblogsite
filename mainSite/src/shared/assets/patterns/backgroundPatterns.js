@@ -33,3 +33,29 @@ export function makePattern(kind, size, background, line) {
 export function makeGrain(seed) {
   return svgUri(`<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="${seed}" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.7 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`)
 }
+
+function seededRandom(seed) {
+  let s = seed % 2147483647
+  if (s <= 0) s += 2147483646
+  return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 }
+}
+
+// Campo de estrellas de 4 puntas disperso, en dos capas de tamaño (grandes
+// detrás, chicas encima) — un solo tile grande con posiciones/rotaciones
+// pseudoaleatorias (deterministas) en vez de una cuadrícula obvia.
+export function makeStarfield({ size = 340, background, seed = 7, layers }) {
+  const rand = seededRandom(seed)
+  const star = (x, y, s, rot, color, opacity) =>
+    `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(${(s / 24).toFixed(3)})" opacity="${opacity.toFixed(2)}"><path d="M12 2 14 10 22 12 14 14 12 22 10 14 2 12 10 10Z" fill="${color}"/></g>`
+  let stars = ''
+  layers.forEach(({ count, sizeRange, color, opacityRange }) => {
+    for (let i = 0; i < count; i++) {
+      const x = rand() * size, y = rand() * size
+      const s = sizeRange[0] + rand() * (sizeRange[1] - sizeRange[0])
+      const rot = rand() * 360
+      const op = opacityRange[0] + rand() * (opacityRange[1] - opacityRange[0])
+      stars += star(x, y, s, rot, color, op)
+    }
+  })
+  return svgUri(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><rect width="${size}" height="${size}" fill="${background}"/>${stars}</svg>`)
+}

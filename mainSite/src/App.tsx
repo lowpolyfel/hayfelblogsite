@@ -1,5 +1,5 @@
-import { VoidPage } from './pages/void-exe/VoidPage'
+import { LobbyPage } from './pages/lobby/LobbyPage'
 
 export default function App() {
-  return <VoidPage />
+  return <LobbyPage />
 }
