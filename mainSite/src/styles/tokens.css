@@ -1,0 +1,17 @@
+:root {
+  --color-ink: #17201d;
+  --color-muted: #63706b;
+  --color-paper: #f4f1e8;
+  --color-surface: #fffdf7;
+  --color-line: #d7d4c9;
+  --color-accent: #d95736;
+  --color-accent-dark: #a83a22;
+  --color-sage: #bfd0c4;
+  --shadow-card: 0 18px 50px rgb(39 45 41 / 9%);
+  --radius-sm: 0.6rem;
+  --radius-md: 1.1rem;
+  --radius-pill: 999px;
+  --container: 1180px;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: Inter, ui-sans-serif, system-ui, sans-serif;
+}
