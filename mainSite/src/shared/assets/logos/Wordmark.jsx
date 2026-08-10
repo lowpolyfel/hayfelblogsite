@@ -1,6 +1,3 @@
-export function Wordmark({ suffix = '', variant = 'stamp', className = '' }) {
-  if (variant === 'boot') {
-    return <h3 className={className}>HAYFEL<br />{suffix}</h3>
-  }
-  return <h1 className={className}>HAYFEL<span>{suffix}</span></h1>
+export function Wordmark({ name, suffix = '', className = '' }) {
+  return <span className={className}>{name}<em>{suffix}</em></span>
 }
