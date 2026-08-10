@@ -3,7 +3,7 @@
   --ink:#1a1a1a; --ink-2:#242424; --ink-3:#2f2f2f;
   --paper:#f3f0e6; --paper-dim:#c9c4b4;
   --body-font:'Nunito',ui-sans-serif,system-ui,sans-serif;
-  --display-font:'Bangers','Comic Sans MS',Impact,sans-serif;
+  --display-font:'Baloo 2','Fredoka',ui-rounded,sans-serif;
 
   position:relative; min-height:100vh; overflow-x:clip;
   font-family:var(--body-font); font-size:14px; color:var(--paper);
@@ -28,7 +28,7 @@
   display:grid; place-content:center; gap:14px; padding:24px; text-align:center;
   transition:opacity .4s ease, visibility .4s; }
 .boot.done{ opacity:0; visibility:hidden; }
-.boot .logo{ font-family:var(--display-font); font-size:clamp(38px,11vw,84px); letter-spacing:1px; line-height:.9; color:#fff; }
+.boot .logo{ font-family:var(--display-font); font-weight:800; font-size:clamp(38px,11vw,84px); letter-spacing:1px; line-height:.9; color:#fff; }
 .boot .bar{ width:min(320px,72vw); height:18px; border:3px solid var(--crimson-hi); padding:2px; margin-inline:auto; }
 .boot .fill{ height:100%; background:var(--crimson-hi); transition:width .16s linear; }
 .boot small{ letter-spacing:2px; opacity:.8; }
@@ -52,7 +52,7 @@
 .hero{ position:relative; display:grid; grid-template-columns:minmax(0,1fr); justify-items:center; gap:10px; text-align:center;
   background-color:var(--ink); background-image:var(--hero-bg, none); background-size:cover; background-position:center;
   padding:26px 14px 20px; }
-.bubble{ margin:0; font-family:var(--display-font); font-size:clamp(34px,9vw,68px); letter-spacing:1px; line-height:.95;
+.bubble{ margin:0; font-family:var(--display-font); font-weight:800; font-size:clamp(34px,9vw,68px); letter-spacing:1px; line-height:.95;
   color:#fff; }
 .navlinks{ display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
 .navlinks a, .navlinks .pending{ font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--paper);
@@ -80,7 +80,7 @@
 .avatar .tag{ font-size:11px; color:var(--crimson-hi); letter-spacing:1px; text-align:center; }
 .avatar .tag b{ color:#fff; }
 .bio p{ margin:0 0 9px; line-height:1.55; font-size:12px; color:var(--paper-dim); }
-.kicker{ font-family:var(--display-font); font-size:22px; letter-spacing:1px; color:#fff; -webkit-text-stroke:1px var(--ink); margin-bottom:6px; }
+.kicker{ font-family:var(--display-font); font-weight:700; font-size:22px; letter-spacing:1px; color:#fff; -webkit-text-stroke:1px var(--ink); margin-bottom:6px; }
 .badges{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .badge{ font-size:10px; letter-spacing:1px; padding:3px 6px; border:2px solid var(--ink); background:var(--crimson);
   color:#fff; }
