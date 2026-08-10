@@ -119,7 +119,7 @@ export function LobbyPage() {
       <div className="crt" aria-hidden="true" />
 
       <div className={`boot ${booting ? '' : 'done'}`} role="status">
-        <div className="logo">HAYFEL<br />SPACE</div>
+        <div className="logo">HAYFEL</div>
         <div className="bar"><div className="fill" style={{ width: `${Math.min(100, bootP)}%` }} /></div>
         <small>{bootLines[Math.min(bootLines.length - 1, Math.floor(bootP / 28))]}</small>
       </div>
@@ -139,7 +139,7 @@ export function LobbyPage() {
             <button className="hamburger" aria-label="Abrir menú" aria-expanded={navOpen} onClick={() => setNavOpen((v) => !v)}>
               <Icon name={navOpen ? 'close' : 'menu'} size={18} />
             </button>
-            <h1 className="bubble">HAYFEL<span>SPACE</span></h1>
+            <h1 className="bubble">HAYFEL</h1>
             <nav className={`navlinks ${navOpen ? 'open' : ''}`} aria-label="Navegación principal">
               {navLinks.map((n) => (
                 n.href ? (
