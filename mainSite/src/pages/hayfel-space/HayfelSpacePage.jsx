@@ -1,24 +1,24 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Icon } from './components/Icon'
+import { useEffect, useRef, useState } from 'react'
+import { Icon } from '../../shared/assets/icons/Icon'
+import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
+import { Wordmark } from '../../shared/assets/logos/Wordmark'
+import { useBlipSound } from '../../shared/assets/sounds/useBlipSound'
+import { backgroundStyles, grainPattern, patterns, televisionPattern, tileSizes } from '../../shared/assets/patterns/backgroundPatterns'
 import { DraggableStickers, FloatingPapers } from './components/Decorations'
-import { PixelSprite } from './components/PixelSprite'
 import { Slab } from './components/Slab'
 import { Window } from './components/Window'
-import { bootLog, channels, initialGuests, moods, posts, schedule, socialLinks, songs } from './data/content'
-import { backgroundStyles, grainPattern, patterns, televisionPattern, tileSizes } from './lib/patterns'
+import { bootLog, externalSites, initialGuests, moods, posts, schedule, socialLinks, songs } from './data/content'
 import './hayfel-space.css'
 
 
 export function HayfelSpacePage() {
   const [booting, setBooting] = useState(true);
   const [bootP, setBootP] = useState(0);
-  const [chan, setChan] = useState("TODO");
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [typed, setTyped] = useState("");
   const [visits, setVisits] = useState(13407);
   const [tick, setTick] = useState(0);
-  const [sound, setSound] = useState(false);
   const [meter, setMeter] = useState(0);
   const [bgIdx, setBgIdx] = useState(0);
   const [guests, setGuests] = useState([
@@ -26,36 +26,11 @@ export function HayfelSpacePage() {
   ]);
   const [gname, setGname] = useState("");
   const [gmsg, setGmsg] = useState("");
-  const audioContext = useRef(null);
   const rootRef = useRef(null);
+  const { enabled: sound, toggle: toggleSound, blip } = useBlipSound();
 
-  const list = chan === "TODO" ? posts : posts.filter((p) => p.category === chan);
-  const featured = list[idx % list.length] || posts[0];
+  const featured = posts[idx % posts.length] || posts[0];
   const bgStyle = backgroundStyles[bgIdx % backgroundStyles.length];
-
-  const blip = useCallback((note = "C6") => {
-    if (!sound || !audioContext.current) return;
-    const context = audioContext.current;
-    const frequencies = { C6: 1046.5, D5: 587.33, D6: 1174.66, E6: 1318.51, F5: 698.46, G5: 783.99, A5: 880, B5: 987.77 };
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = "square";
-    oscillator.frequency.value = frequencies[note] || frequencies.C6;
-    gain.gain.setValueAtTime(0.05, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.08);
-    oscillator.connect(gain).connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.08);
-  }, [sound]);
-
-  async function toggleSound() {
-    if (sound) { setSound(false); return; }
-    try {
-      audioContext.current ||= new AudioContext();
-      await audioContext.current.resume();
-      setSound(true);
-    } catch { setSound(false); }
-  }
 
   function cycleBg() {
     setBgIdx((i) => (i + 1) % backgroundStyles.length);
@@ -86,9 +61,9 @@ export function HayfelSpacePage() {
 
   useEffect(() => {
     if (!playing || booting) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % list.length), 9000);
+    const t = setInterval(() => setIdx((i) => (i + 1) % posts.length), 9000);
     return () => clearInterval(t);
-  }, [playing, booting, list.length]);
+  }, [playing, booting]);
 
   useEffect(() => { const t = setInterval(() => setTick((n) => n + 1), 3200); return () => clearInterval(t); }, []);
 
@@ -122,7 +97,7 @@ export function HayfelSpacePage() {
   }
 
   function pick(post, e) {
-    const i = list.indexOf(post);
+    const i = posts.indexOf(post);
     setIdx(i < 0 ? 0 : i); setPlaying(false); blip("E6");
     if (e) confetti(e.clientX, e.clientY);
     rootRef.current?.querySelector(".tv")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -151,7 +126,7 @@ export function HayfelSpacePage() {
         <div className="bootwin">
           <div className="bbar"><i /><i /><i /><span style={{ marginLeft: 6 }}>SISTEMA.BOOT</span></div>
           <div className="bbody">
-            <h3>HAYFEL<br />SPACE</h3>
+            <Wordmark variant="boot" suffix="SPACE" />
             <div className="sub">iniciando interfaz personal</div>
             <div className="bootlog">
               {bootLog.map((l, i) => {
@@ -172,23 +147,28 @@ export function HayfelSpacePage() {
 
       <div className="wrap">
 
-        {/* ---------- CABECERA: taskbar tipo ventana + estampa irregular ---------- */}
+        {/* ---------- CABECERA: taskbar + menú de sitios hermanos ---------- */}
         <header className="head">
           <Slab rotation={-4} clip="shard" face="shadow" className="stamp hover">
-            <h1>HAYFEL<span>TRANSMITE</span></h1>
+            <Wordmark suffix="TRANSMITE" />
           </Slab>
 
           <div className="win taskbar">
             <span className="wdots"><i /><i /><i /></span>
             <span className="wname">HAYFELSPACE.EXE</span>
-            <nav className="tabs">
-              {channels.map((c, i) => (
-                <button key={c.key} className={`tabbtn ${chan === c.key ? "on" : ""}`}
-                  onClick={() => { setChan(c.key); setIdx(0); setPlaying(true); blip("C6"); }}>
-                  <PixelSprite accent={c.accent} eye={i % 2 ? "#f5ede2" : "#ff1f3f"} variant={i} />
-                  {c.key}
-                </button>
-              ))}
+            <nav className="tabs" aria-label="Otros sitios de Hayfel">
+              {externalSites.map((s, i) => {
+                const Body = <>
+                  <PixelSprite accent={s.accent} eye={i % 2 ? "#f5ede2" : "#ff1f3f"} variant={i} />
+                  {s.key}
+                  {s.href && <Icon name="external" size={11} />}
+                </>;
+                return s.href ? (
+                  <a key={s.key} className="tabbtn" href={s.href} target="_blank" rel="noreferrer" onClick={() => blip("C6")}>{Body}</a>
+                ) : (
+                  <span key={s.key} className="tabbtn soon" aria-disabled="true">{Body}<i className="soontag">PRONTO</i></span>
+                );
+              })}
             </nav>
             <span className="clock">{clockStr}</span>
             <button className={`snd2 ${sound ? "on" : ""}`} onClick={toggleSound}>
@@ -217,14 +197,14 @@ export function HayfelSpacePage() {
             </div>
           </Slab>
 
-          <Window title="REPRODUCTOR" tag={`${idx % list.length + 1}/${list.length}`} className="side">
+          <Window title="REPRODUCTOR" tag={`${idx % posts.length + 1}/${posts.length}`} className="side">
             <div className="transport2">
-              <button className="tbtn2" onClick={() => { setIdx((i) => (i - 1 + list.length) % list.length); setPlaying(false); blip("D5"); }}><Icon name="previous" size={15} /></button>
+              <button className="tbtn2" onClick={() => { setIdx((i) => (i - 1 + posts.length) % posts.length); setPlaying(false); blip("D5"); }}><Icon name="previous" size={15} /></button>
               <button className="tbtn2" onClick={() => { setPlaying(!playing); blip("G5"); }}>{playing ? <Icon name="pause" size={15} /> : <Icon name="play" size={15} />}</button>
-              <button className="tbtn2" onClick={() => { setIdx((i) => (i + 1) % list.length); setPlaying(false); blip("F5"); }}><Icon name="next" size={15} /></button>
+              <button className="tbtn2" onClick={() => { setIdx((i) => (i + 1) % posts.length); setPlaying(false); blip("F5"); }}><Icon name="next" size={15} /></button>
             </div>
             <div>
-              <div className="stat"><b>canal</b><span>{chan}</span></div>
+              <div className="stat"><b>categoría</b><span>{featured.category}</span></div>
               <div className="stat"><b>sonando</b><span>{songs[tick % songs.length]}</span></div>
               <div className="stat"><b>humor</b><span>{moods[tick % moods.length]}</span></div>
             </div>
@@ -232,7 +212,7 @@ export function HayfelSpacePage() {
           </Window>
         </section>
 
-        {/* ---------- TRES PANELES ---------- */}
+        {/* ---------- DOS PANELES: horario + perfil (con "ahora mismo" integrado) ---------- */}
         <section className="row3" id="prog">
           <Window title="PROGRAMACIÓN DE HOY" crimsonBar>
             <div className="inset sched">
@@ -259,38 +239,22 @@ export function HayfelSpacePage() {
                 </div>
               </div>
             </div>
-          </Window>
-
-          <Slab rotation={1.8} clip="b" face="deep" delay={340}>
-            <div style={{ padding: 14 }}>
-              <div style={{ fontFamily: "var(--fat)", fontSize: 17, marginBottom: 9 }}>AHORA MISMO</div>
+            <div className="now">
+              <div className="nowtitle">AHORA MISMO</div>
               <ul className="nowl">
                 <li><b>leyendo</b><span>papers de RE</span></li>
                 <li><b>comiendo</b><span>pollo, otra vez</span></li>
                 <li><b>tesis</b><span>capítulo 4</span></li>
               </ul>
-              <div style={{ fontSize: 10, letterSpacing: 2, marginTop: 12 }}>62% ESCRITO</div>
               <div className="meter"><i style={{ width: `${meter}%` }} /></div>
-              <div className="hint" style={{ opacity: .85 }}>100% ansiedad</div>
+              <div className="hint">62% escrito · 100% ansiedad</div>
             </div>
-          </Slab>
-        </section>
-
-        {/* ---------- TICKER ---------- */}
-        <section className="strip">
-          <Slab rotation={-2} clip="tab" face="flare" className="striplabel" delay={380}>¿QUÉ HAY?</Slab>
-          <div className="tickwrap"><span>
-            canal actual: {chan} ~ {list.length} entradas en cola ~ el libro de visitas está abierto ~ arrastra los stickers ~ sin algoritmo, sin ads, puro yo ~
-          </span></div>
-          <div className="stripbtns">
-            <button className="minib" onClick={() => { blip("C6"); document.querySelector("#prog")?.scrollIntoView({ behavior: "smooth" }); }}>HORARIOS</button>
-            <button className="minib" onClick={(e) => { setVisits(visits + 1); confetti(e.clientX, e.clientY); blip("E6"); }}>CLICK DIARIO</button>
-          </div>
+          </Window>
         </section>
 
         {/* ---------- BANNERS: bento, mezcla de tamaños y formas ---------- */}
         <section className="banners" id="banners">
-          {list.slice(0, 4).map((p, i) => (
+          {posts.slice(0, 4).map((p, i) => (
             i === 0 ? (
               <Window key={p.title} title={p.category} tag={p.date} crimsonBar className={`ban lg hover`} onClick={(e) => pick(p, e)}>
                 <div className="n">DESTACADO · N°01</div>
@@ -328,39 +292,34 @@ export function HayfelSpacePage() {
             <div className="hint">las firmas se borran al recargar (prototipo, todavía sin base de datos)</div>
           </Window>
 
-          <div style={{ display: "grid", gap: 16 }}>
-            <Window title="ARCHIVO">
-              <ul className="arch">
-                {posts.map((p) => (
-                  <li key={p.title} onClick={(e) => { setChan("TODO"); setTimeout(() => pick(p, e), 0); }}>
-                    <em>{p.date}</em><span>{p.title}</span>
-                  </li>
-                ))}
-              </ul>
-            </Window>
-            <Window title="OBSESIONES">
-              <div className="tags">
-                <span>agentes LLM</span><span>pixel art</span><span>upper/lower</span>
-                <span>curry</span><span>CSS plano a propósito</span><span>PRISMA</span><span>webrings</span>
-              </div>
-            </Window>
-          </div>
+          <Window title="ARCHIVO">
+            <ul className="arch">
+              {posts.map((p) => (
+                <li key={p.title} onClick={(e) => pick(p, e)}>
+                  <em>{p.date}</em><span>{p.title}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="tags">
+              <span>agentes LLM</span><span>pixel art</span><span>upper/lower</span>
+              <span>curry</span><span>CSS plano a propósito</span><span>webrings</span>
+            </div>
+          </Window>
         </section>
 
-        {/* ---------- REDES ---------- */}
+        {/* ---------- REDES: estilo "link in bio" ---------- */}
         <section className="redwrap" id="redes">
-          <Slab rotation={4} clip="tab" face="gold" className="redsoon hover">PRONTO</Slab>
-          <Window title="REDES SOCIALES" tag="preparando enlaces" crimsonBar>
+          <Window title="REDES" tag="link in bio" crimsonBar>
             <div className="redgrid">
               {socialLinks.map((s) => {
                 const Body = (
                   <>
-                    <span className="ico">{s.icon ? <Icon name={s.icon} /> : <b>{s.monogram}</b>}</span>
+                    <span className="ico"><Icon name={s.icon} size={18} /></span>
                     <span className="txt">
                       <span className="plat">{s.name}</span>
                       <span className="handle">{s.handle}</span>
                     </span>
-                    <span className="tag">{s.href ? "ABRIR" : "PRONTO"}</span>
+                    <span className="tag">{s.href ? <Icon name="external" size={12} /> : "PRONTO"}</span>
                   </>
                 );
                 return s.href ? (
@@ -370,7 +329,7 @@ export function HayfelSpacePage() {
                 );
               })}
             </div>
-            <div className="hint">los links todavía no están puestos, pero las tarjetas ya están listas — solo falta rellenar el href de cada una en socialLinks.</div>
+            <div className="hint">los links todavía no están puestos — solo falta rellenar el href de cada uno en socialLinks.</div>
           </Window>
         </section>
 
@@ -379,9 +338,10 @@ export function HayfelSpacePage() {
           <div className="inner">
             <div>
               <div style={{ letterSpacing: 2, marginBottom: 6 }}>VISITAS</div>
-              <div className="counter">
+              <button className="counter" aria-label="Sumar una visita"
+                onClick={(e) => { setVisits((v) => v + 1); confetti(e.clientX, e.clientY); blip("E6"); }}>
                 {String(visits).padStart(6, "0").split("").map((n, i) => <i key={i}>{n}</i>)}
-              </div>
+              </button>
             </div>
             <div className="ring">
               <span className="b88" style={{ "--r": "-4deg" }}>CÓDIGO<br />ABIERTO</span>
@@ -400,7 +360,7 @@ export function HayfelSpacePage() {
 
       <button className="bgswitch" onClick={cycleBg} aria-label="Cambiar fondo">
         <Icon name="refresh" size={13} />
-        FONDO: {bgStyle.label}
+        <span className="bglabel">FONDO: {bgStyle.label}</span>
         <span className="dotsrow">
           {backgroundStyles.map((b, i) => <i key={b.id} className={i === bgIdx ? "on" : ""} />)}
         </span>
