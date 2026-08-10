@@ -1,5 +1,5 @@
-import { BlogHomePage } from './pages/blog-home/BlogHomePage'
+import { HayfelSpacePage } from './pages/hayfel-space/HayfelSpacePage'
 
 export default function App() {
-  return <BlogHomePage />
+  return <HayfelSpacePage />
 }
