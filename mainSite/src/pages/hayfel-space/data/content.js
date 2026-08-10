@@ -31,12 +31,10 @@ Es el mismo motivo por el que me gusta escribir con restricciones: menos opcione
 El avatar de este sitio está hecho con un arreglo de texto y un montón de rectángulos. Nada más.` },
 ]
 
-// Menú de sitios hermanos: cada botón abre otro sitio en una pestaña nueva,
-// no filtra contenido de esta página. href:null = todavía no existe el sitio.
-export const externalSites = [
-  { key: 'PORTAFOLIO', accent: '#ff1f3f', href: null },
-  { key: 'PROYECTOS', accent: '#ffc300', href: null },
-  { key: 'TESIS DOCS', accent: '#f5ede2', href: null },
+export const channels = [
+  { key: 'TODO', accent: '#f5ede2' }, { key: 'TESIS', accent: '#ff1f3f' },
+  { key: 'GYM', accent: '#0b0708' }, { key: 'COCINA', accent: '#d40e31' },
+  { key: 'DIBUJO', accent: '#ffc300' }, { key: 'SITIO', accent: '#f5ede2' },
 ]
 
 export const schedule = [
@@ -47,13 +45,13 @@ export const schedule = [
 export const songs = ['jazz de bar en loop', 'breakcore a las 3am', 'la misma playlist de siempre', 'silencio (por fin)']
 export const moods = ['cafeinado', 'en negación', 'productivo??', 'tranquilo']
 export const bootLog = ['montando ventanas...', 'cargando patrón de fondo...', 'afilando dos o tres bordes...', 'listo.']
-// Todos los enlaces reales van aquí — solo falta rellenar el href de cada uno.
 export const socialLinks = [
-  { name: 'TIKTOK', icon: 'tiktok', handle: '@hayfel', href: null },
+  { name: 'GITHUB', icon: 'github', handle: '@hayfel', href: null },
   { name: 'INSTAGRAM', icon: 'instagram', handle: '@hayfel', href: null },
+  { name: 'X / TWITTER', icon: 'twitter', handle: '@hayfel', href: null },
+  { name: 'TIKTOK', monogram: 'TT', handle: '@hayfel', href: null },
   { name: 'YOUTUBE', icon: 'youtube', handle: 'hayfel', href: null },
-  { name: 'TWITCH', icon: 'twitch', handle: 'hayfel', href: null },
-  { name: 'SPOTIFY', icon: 'spotify', handle: 'hayfel', href: null },
+  { name: 'LINKEDIN', icon: 'linkedin', handle: 'hayfel', href: null },
 ]
 export const initialGuests = [
   { name: 'ana_delcampo', message: 'me encanta que esto no parezca hecho con plantilla' },
