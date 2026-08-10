@@ -1,32 +1,49 @@
-# React + TypeScript + Vite
+# Entre líneas — plataforma de blog
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Base frontend de un blog personal moderno, construida con React, TypeScript y Vite. El proyecto prioriza contenido, accesibilidad, rendimiento y crecimiento gradual sin acoplar la interfaz a un proveedor concreto.
 
-Currently, two official plugins are available:
+## Inicio rápido
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Arquitectura
+
+```text
+src/
+├── components/layout/   # Estructura global (cabecera y pie)
+├── data/                # Datos locales sustituibles por CMS/API
+├── domain/              # Tipos y reglas del negocio
+├── features/            # Funciones aisladas (posts, newsletter, comentarios…)
+├── pages/               # Composición de rutas/páginas
+├── services/api/        # Cliente HTTP e integraciones externas
+├── shared/config/       # Configuración central del sitio
+├── shared/lib/          # Utilidades puras y reutilizables
+└── styles/              # Tokens y estilos globales
+```
+
+La dependencia fluye desde páginas y funcionalidades hacia `domain` y `shared`; el dominio no conoce React ni proveedores externos. Cada integración futura debe vivir detrás de un adaptador en `services/api` (CMS, almacenamiento de imágenes, comentarios, analítica o redes), evitando importar SDK de terceros desde componentes visuales.
+
+## Variables de entorno
+
+Solo las variables prefijadas con `VITE_` llegan al navegador; **nunca** guardes secretos en ellas. Las claves privadas y la moderación de comentarios deben residir en un backend o función serverless.
+
+## Próximos módulos recomendados
+
+1. Enrutado y páginas de artículo por `slug`.
+2. CMS headless con contenido Markdown/MDX y borradores.
+3. Carga de imágenes con transformación, tamaños responsivos y CDN.
+4. Comentarios con autenticación, rate limiting y moderación.
+5. Newsletter con doble confirmación y política de privacidad.
+6. Metadatos SEO, sitemap, RSS, Open Graph y datos estructurados.
+7. Pruebas unitarias, de accesibilidad y end-to-end en CI.
+
+## Comandos
+
+- `npm run dev`: servidor local.
+- `npm run build`: comprobación de tipos y compilación de producción.
+- `npm run lint`: análisis estático.
+- `npm run preview`: previsualización del build.
