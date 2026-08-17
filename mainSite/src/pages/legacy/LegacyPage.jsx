@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Icon } from '../../shared/assets/icons/Icon'
 import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
 import { Starfield } from '../../shared/assets/patterns/Starfield'
-import { PersonaMenu } from './components/PersonaMenu'
+import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
   badges, bio, bootLines, initialGuests, moods, navLinks, notice, posts, songs, tags,
 } from './data/content'
-import './lobby.css'
+import './legacy.css'
 
 // Las 3 variantes de movimiento del fondo (deriva/lluvia/galaxia), cada una
 // con su propio color — para que ciclar entre ellas se sienta como cambiar
@@ -40,7 +40,7 @@ function Sticker({ className, style, children }) {
   )
 }
 
-export function LobbyPage() {
+export function LegacyPage() {
   const [booting, setBooting] = useState(true)
   const [bootP, setBootP] = useState(0)
   const [bgIdx, setBgIdx] = useState(0)

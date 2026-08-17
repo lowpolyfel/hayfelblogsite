@@ -1,4 +1,8 @@
-# Lobby
+# Legacy (versión archivada)
+
+> Esta fue la página principal antes del rediseño scrapbook. Se conserva
+> completa y sigue viva en `#legacy` (ver `src/App.tsx`) — no es la home
+> actual, que ahora vive en `src/pages/scrapbook/`.
 
 Portado desde un prototipo HTML/CSS/JS provisto por el usuario (ventana
 retro, boot screen, CRT overlay, stickers arrastrables, guestbook, ticker),
@@ -11,7 +15,8 @@ diseño, no datos reales de la persona detrás del sitio.
 - `LobbyPage.jsx`: composición de la página y estado de la experiencia.
 - `data/content.js`: contenido editorial de ejemplo (posts, tags, guestbook).
 - `lobby.css`: paleta crimson/negro + tipografía + responsive.
-- `components/PersonaMenu.jsx` + `persona-menu.css`: el menú de navegación.
+- `shared/ui/PersonaMenu.jsx` + `persona-menu.css`: el menú de navegación
+  (compartido — también lo usa la home actual).
 
 ## Fondo: campo de estrellas animado
 
