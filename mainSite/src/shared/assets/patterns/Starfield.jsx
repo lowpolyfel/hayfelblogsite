@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react'
 
 // Campo de estrellas animado en canvas: capas de tamaños (grandes/medianas/
 // chicas) dibujadas con contornos concéntricos alternando blanco/negro sobre
-// la estrella roja base, en una de tres variantes de movimiento elegida al
-// azar (deriva lenta, lluvia, galaxia). Se reordena con click/tap o barra
-// espaciadora. Respeta prefers-reduced-motion (dibuja un solo cuadro fijo).
-export function Starfield({ className, red = '#c8102e', white = '#ffffff', black = '#000000' }) {
+// la estrella base, en una de tres variantes de movimiento (deriva lenta,
+// lluvia, galaxia) — `variant` la fija desde afuera; sin ella se elige al
+// azar. Se reordena con click/tap o barra espaciadora. Respeta
+// prefers-reduced-motion (dibuja un solo cuadro fijo).
+
+export function Starfield({ className, variant, red = '#c8102e', white = '#ffffff', black = '#000000' }) {
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -18,7 +20,7 @@ export function Starfield({ className, red = '#c8102e', white = '#ffffff', black
     const TAU = Math.PI * 2
     const S36 = Math.sin(Math.PI / 5), C36 = Math.cos(Math.PI / 5)
 
-    const TIPO_ANIMACION = Math.floor(Math.random() * 3)
+    const TIPO_ANIMACION = variant != null ? variant : Math.floor(Math.random() * 3)
     const DIRECCION_VORTICE = Math.random() > 0.5 ? 1 : -1
 
     const TIERS = [
@@ -230,7 +232,7 @@ export function Starfield({ className, red = '#c8102e', white = '#ffffff', black
       document.removeEventListener('keydown', onKeydown)
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [red, white, black])
+  }, [variant, red, white, black])
 
   return <canvas ref={canvasRef} className={className} role="img"
     aria-label="Fondo animado de estrellas rojas sobrepuestas con blanco y negro" />

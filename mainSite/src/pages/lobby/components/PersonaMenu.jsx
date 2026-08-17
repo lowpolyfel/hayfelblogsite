@@ -15,6 +15,11 @@ function ScatterText({ text }) {
   return <>{chars}</>
 }
 
+// Un color de acento distinto por ítem — que el fondo entero (puntos, texto
+// gigante, hover) cambie de paleta según lo que esté en foco, como si cada
+// entrada del menú fuera una pantalla distinta.
+const ACCENTS = ['#c8102e', '#7b3ff2', '#00b0c8', '#c89010', '#0f9e6e']
+
 let audioCtx = null
 function blip(freq, dur = 0.06) {
   try {
@@ -83,12 +88,15 @@ export function PersonaMenu({ open, onClose, items, visits }) {
     else blip(520, 0.05)
   }
 
+  const activeItem = items[activeIdx]
+  const accent = ACCENTS[activeIdx % ACCENTS.length]
+
   return (
     <div ref={containerRef} className={`pmenu ${open ? 'open' : ''}`} role="dialog" aria-modal="true"
-      aria-hidden={!open} aria-label="Menú de navegación">
+      aria-hidden={!open} aria-label="Menú de navegación" style={{ '--pmenu-accent': accent }}>
       <div className="pmenu-halftone" ref={halftoneRef} aria-hidden="true" />
       <div className="pmenu-silhouette" ref={silhouetteRef} aria-hidden="true" />
-      <div className="pmenu-bgtext" ref={bgTextRef} aria-hidden="true">COMMAND<br />0{activeIdx + 1}</div>
+      <div className="pmenu-bgtext" ref={bgTextRef} aria-hidden="true">{activeItem?.key}</div>
 
       <div className="pmenu-ribbon"><span>MENU</span></div>
 
