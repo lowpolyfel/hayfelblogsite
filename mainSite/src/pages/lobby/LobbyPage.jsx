@@ -115,7 +115,7 @@ export function LobbyPage() {
 
   return (
     <div className="lobby">
-      <Starfield className="lobby-bg" variant={bg.variant} red={bg.red} />
+      <Starfield className="lobby-bg" variant={bg.variant} red={bg.red} paused={navOpen} />
       <div className="crt" aria-hidden="true" />
 
       <div className={`boot ${booting ? '' : 'done'}`} role="status">
