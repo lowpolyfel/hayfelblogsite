@@ -1,34 +1,48 @@
 .pmenu{
   position:fixed; inset:0; z-index:8500; overflow:hidden;
-  background:var(--pmenu-accent, var(--crimson));
+  background:var(--ink);
   display:flex; align-items:center; justify-content:center;
   font-family:var(--display-font);
   perspective:1200px;
   opacity:0; visibility:hidden; pointer-events:none;
-  transition:opacity .25s ease, visibility .25s, background .35s ease;
+  transition:opacity .25s ease, visibility .25s;
 }
 .pmenu.open{ opacity:1; visibility:visible; pointer-events:auto; }
 .pmenu *{ box-sizing:border-box; }
 
-/* ---------- fondo: puntos en movimiento + silueta + número gigante ---------- */
+/* ---------- capas de color: "traga" el nuevo color desde el punto del hover ---------- */
+.pmenu-basecolor, .pmenu-wipe{ position:absolute; inset:0; z-index:0; }
+.pmenu-wipe{
+  clip-path:circle(0% at var(--wx,50%) var(--wy,50%));
+  animation:pmSwallow .65s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes pmSwallow{ to{ clip-path:circle(150% at var(--wx,50%) var(--wy,50%)); } }
+
+/* ---------- fondo: puntos en movimiento + silueta + palabra gigante ---------- */
 .pmenu-halftone{
-  position:absolute; inset:-50%;
+  position:absolute; inset:-50%; z-index:1;
   background-image:radial-gradient(var(--ink) 2.5px, transparent 2.5px);
   background-size:25px 25px; transform:rotate(-15deg);
   animation:pmDots 20s linear infinite; opacity:.75; pointer-events:none;
 }
 @keyframes pmDots{ to{ background-position:500px 500px; } }
 .pmenu-silhouette{
-  position:absolute; bottom:-10%; right:-5%; width:65vw; height:110vh;
+  position:absolute; bottom:-10%; right:-5%; width:65vw; height:110vh; z-index:1;
   background:var(--ink);
   clip-path:polygon(25% 100%,0% 50%,35% 30%,30% 15%,80% 0,100% 25%,100% 100%);
   pointer-events:none;
 }
 .pmenu-bgtext{
-  position:absolute; bottom:2%; right:2%; max-width:66vw; font-size:clamp(48px,11vw,190px);
-  color:transparent; text-align:right; text-transform:uppercase; overflow-wrap:break-word;
-  -webkit-text-stroke:4px rgba(255,255,255,.15); line-height:.82; transform:rotate(-8deg);
-  pointer-events:none; font-weight:800; transition:opacity .15s ease;
+  position:absolute; z-index:2; max-width:70vw; font-size:clamp(90px,24vw,480px);
+  color:transparent; text-transform:uppercase; overflow-wrap:break-word;
+  -webkit-text-stroke:4px rgba(255,255,255,.16); line-height:.8;
+  transform:rotate(var(--bgrot,-8deg));
+  pointer-events:none; font-weight:800;
+  animation:pmBgPop .4s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes pmBgPop{
+  from{ opacity:0; transform:rotate(var(--bgrot,-8deg)) scale(1.3); }
+  to{ opacity:1; transform:rotate(var(--bgrot,-8deg)) scale(1); }
 }
 
 /* ---------- cinta MENU + botón cerrar ---------- */
@@ -104,7 +118,7 @@
 .pmenu-item:hover .pmenu-layer-1, .pmenu-item:focus-visible .pmenu-layer-1{ transform:scaleX(1); }
 .pmenu-item:hover .pmenu-layer-2, .pmenu-item:focus-visible .pmenu-layer-2{ transform:scaleX(1); }
 .pmenu-item:hover .pmenu-text, .pmenu-item:focus-visible .pmenu-text{
-  color:var(--pmenu-accent, var(--crimson)); -webkit-text-stroke:3px var(--paper);
+  color:var(--item-accent, var(--crimson)); -webkit-text-stroke:3px var(--paper);
   text-shadow:8px 10px 0 var(--ink), -1px -1px 0 var(--paper); letter-spacing:1px;
 }
 .pmenu-item:hover .pmenu-text span, .pmenu-item:focus-visible .pmenu-text span{ transform:none !important; margin:0 1px; }
@@ -128,7 +142,7 @@
 @media (max-width:760px){
   .pmenu-items{ display:flex; flex-direction:column; gap:18px; height:auto; max-height:78vh; overflow-y:auto; width:min(420px,88vw); }
   .pmenu-text{ font-size:2.6rem; -webkit-text-stroke:3px var(--ink); }
-  .pmenu-bgtext{ font-size:clamp(40px,18vw,90px); max-width:80vw; }
+  .pmenu-bgtext{ font-size:clamp(56px,26vw,160px); max-width:88vw; }
   .pmenu-hud-status{ display:none; }
   .pmenu-hud-visits{ font-size:1.8rem; bottom:12px; left:14px; }
   .pmenu-ribbon{ top:14px; left:-70px; width:240px; font-size:11px; letter-spacing:4px; }

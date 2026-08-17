@@ -4,11 +4,15 @@ import { useEffect, useRef } from 'react'
 // chicas) dibujadas con contornos concéntricos alternando blanco/negro sobre
 // la estrella base, en una de tres variantes de movimiento (deriva lenta,
 // lluvia, galaxia) — `variant` la fija desde afuera; sin ella se elige al
-// azar. Se reordena con click/tap o barra espaciadora. Respeta
-// prefers-reduced-motion (dibuja un solo cuadro fijo).
+// azar. Se reordena con click/tap sobre el propio fondo, o barra espaciadora.
+// `paused` detiene el dibujo (p.ej. mientras un overlay opaco lo tapa) sin
+// perder el estado del campo. ~30fps, no 60: es un fondo, no un juego.
+// Respeta prefers-reduced-motion (dibuja un solo cuadro fijo).
 
-export function Starfield({ className, variant, red = '#c8102e', white = '#ffffff', black = '#000000' }) {
+export function Starfield({ className, variant, paused = false, red = '#c8102e', white = '#ffffff', black = '#000000' }) {
   const canvasRef = useRef(null)
+  const pausedRef = useRef(paused)
+  pausedRef.current = paused
 
   useEffect(() => {
     const cv = canvasRef.current
@@ -148,7 +152,7 @@ export function Starfield({ className, variant, red = '#c8102e', white = '#fffff
 
       let ci = 1, acc = 0, lam = 1
       const colores = [red, s.secundario]
-      for (let n = 0; n < 14; n++) {
+      for (let n = 0; n < 8; n++) {
         const sc = R * lam
         ctx.setTransform(sc * co, sc * si, -sc * si, sc * co, px, py)
         ctx.fillStyle = colores[ci & 1]
@@ -170,11 +174,16 @@ export function Starfield({ className, variant, red = '#c8102e', white = '#fffff
     const t0 = performance.now()
     let corriendo = false
     let rafId = 0
+    let ultimoFrame = 0
+    const FRAME_MIN = 1000 / 30 // ~30fps: de sobra para una deriva de fondo
 
     function frame(ms) {
       if (!corriendo) return
-      pintar((ms - t0) / 1000)
       rafId = requestAnimationFrame(frame)
+      if (pausedRef.current) return
+      if (ms - ultimoFrame < FRAME_MIN) return
+      ultimoFrame = ms
+      pintar((ms - t0) / 1000)
     }
 
     function arrancar() {
@@ -216,7 +225,9 @@ export function Starfield({ className, variant, red = '#c8102e', white = '#fffff
     function onVisibility() { if (document.hidden) corriendo = false; else arrancar() }
 
     window.addEventListener('resize', onResize)
-    document.addEventListener('pointerdown', rebarajar)
+    // Solo reordena si el click es sobre el propio fondo (el canvas está
+    // detrás de todo lo demás), no en cualquier botón/link del sitio.
+    cv.addEventListener('pointerdown', rebarajar)
     document.addEventListener('keydown', onKeydown)
     document.addEventListener('visibilitychange', onVisibility)
 
@@ -228,7 +239,7 @@ export function Starfield({ className, variant, red = '#c8102e', white = '#fffff
       cancelAnimationFrame(rafId)
       clearTimeout(resizeTimer)
       window.removeEventListener('resize', onResize)
-      document.removeEventListener('pointerdown', rebarajar)
+      cv.removeEventListener('pointerdown', rebarajar)
       document.removeEventListener('keydown', onKeydown)
       document.removeEventListener('visibilitychange', onVisibility)
     }
