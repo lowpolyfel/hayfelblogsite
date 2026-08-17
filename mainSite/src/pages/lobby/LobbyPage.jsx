@@ -8,6 +8,15 @@ import {
 } from './data/content'
 import './lobby.css'
 
+// Las 3 variantes de movimiento del fondo (deriva/lluvia/galaxia), cada una
+// con su propio color — para que ciclar entre ellas se sienta como cambiar
+// a un fondo distinto.
+const BG_PRESETS = [
+  { variant: 0, red: '#c8102e', label: 'crimson · deriva' },
+  { variant: 1, red: '#1450c8', label: 'azul · lluvia' },
+  { variant: 2, red: '#c89010', label: 'dorado · galaxia' },
+]
+
 function Sticker({ className, style, children }) {
   const [pos, setPos] = useState(null)
   const dragging = useRef(false)
@@ -34,6 +43,7 @@ function Sticker({ className, style, children }) {
 export function LobbyPage() {
   const [booting, setBooting] = useState(true)
   const [bootP, setBootP] = useState(0)
+  const [bgIdx, setBgIdx] = useState(0)
   const [navOpen, setNavOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [openIdx, setOpenIdx] = useState(-1)
@@ -101,9 +111,11 @@ export function LobbyPage() {
     setGname(''); setGmsg('')
   }
 
+  const bg = BG_PRESETS[bgIdx % BG_PRESETS.length]
+
   return (
     <div className="lobby">
-      <Starfield className="lobby-bg" />
+      <Starfield className="lobby-bg" variant={bg.variant} red={bg.red} />
       <div className="crt" aria-hidden="true" />
 
       <div className={`boot ${booting ? '' : 'done'}`} role="status">
@@ -111,6 +123,10 @@ export function LobbyPage() {
         <div className="bar"><div className="fill" style={{ width: `${Math.min(100, bootP)}%` }} /></div>
         <small>{bootLines[Math.min(bootLines.length - 1, Math.floor(bootP / 28))]}</small>
       </div>
+
+      <button className="bgswitch" onClick={() => setBgIdx((i) => (i + 1) % BG_PRESETS.length)} aria-label="Cambiar fondo">
+        <Icon name="sparkle" size={12} /> FONDO: {bg.label}
+      </button>
 
       <main className="stage" ref={stageRef}>
         <div className="frame">
