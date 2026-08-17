@@ -1,24 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Icon } from '../../shared/assets/icons/Icon'
 import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
-import { makeStarfield } from '../../shared/assets/patterns/backgroundPatterns'
+import { Starfield } from '../../shared/assets/patterns/Starfield'
+import { PersonaMenu } from './components/PersonaMenu'
 import {
   badges, bio, bootLines, initialGuests, moods, navLinks, notice, posts, songs, tags,
 } from './data/content'
 import './lobby.css'
-
-// Estrellas grandes y tenues detrás, estrellas chicas y brillantes encima —
-// un solo tile grande generado por código (no una copia de ninguna imagen).
-const STARFIELD = makeStarfield({
-  size: 380,
-  background: '#1a1a1a',
-  seed: 42,
-  layers: [
-    { count: 12, sizeRange: [40, 68], color: '#ffffff', opacityRange: [.05, .09] },
-    { count: 10, sizeRange: [26, 42], color: '#e0122c', opacityRange: [.08, .14] },
-    { count: 46, sizeRange: [7, 15], color: '#ffffff', opacityRange: [.5, .95] },
-  ],
-})
 
 function Sticker({ className, style, children }) {
   const [pos, setPos] = useState(null)
@@ -115,7 +103,7 @@ export function LobbyPage() {
 
   return (
     <div className="lobby">
-      <div className="lobby-bg" style={{ backgroundImage: STARFIELD }} aria-hidden="true" />
+      <Starfield className="lobby-bg" />
       <div className="crt" aria-hidden="true" />
 
       <div className={`boot ${booting ? '' : 'done'}`} role="status">
@@ -134,21 +122,13 @@ export function LobbyPage() {
             <div className="chips"><i /><i /><i /></div>
           </div>
 
-          {/* ---------- HERO: logo grande + nav, sin redes, listo para bg futuro ---------- */}
+          {/* ---------- HERO: logo grande + disparador del menú, listo para bg futuro ---------- */}
           <section className="hero" id="hero">
-            <button className="hamburger" aria-label="Abrir menú" aria-expanded={navOpen} onClick={() => setNavOpen((v) => !v)}>
+            <button className="hamburger" aria-label={navOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={navOpen}
+              onClick={() => setNavOpen((v) => !v)}>
               <Icon name={navOpen ? 'close' : 'menu'} size={18} />
             </button>
             <h1 className="bubble">HAYFEL</h1>
-            <nav className={`navlinks ${navOpen ? 'open' : ''}`} aria-label="Navegación principal">
-              {navLinks.map((n) => (
-                n.href ? (
-                  <a key={n.key} href={n.href} target="_blank" rel="noreferrer">{n.key}</a>
-                ) : (
-                  <span key={n.key} className="pending" aria-disabled="true">{n.key}</span>
-                )
-              ))}
-            </nav>
           </section>
 
           {/* ---------- PERFIL.EXE ---------- */}
@@ -268,6 +248,8 @@ export function LobbyPage() {
           <b>NOTA AL MARGEN</b>arrástrame. sí, en serio, agárrame con el mouse.
         </Sticker>
       </main>
+
+      <PersonaMenu open={navOpen} onClose={() => setNavOpen(false)} items={navLinks} visits={visits} />
     </div>
   )
 }
