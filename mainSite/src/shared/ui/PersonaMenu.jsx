@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import { Icon } from '../assets/icons/Icon'
 import { Starfield } from '../assets/patterns/Starfield'
+import { TornPaper } from './TornPaper'
 import './persona-menu.css'
 
 // Letras dispersas al azar que se "enderezan" al hacer hover. Memoizado:
@@ -27,6 +28,20 @@ const BG_POSITIONS = [
   { top: '30%', bottom: 'auto', left: 'auto', right: '-4%', align: 'right', rot: 6 },
   { top: 'auto', bottom: '2%', left: '-4%', right: 'auto', align: 'left', rot: 8 },
   { top: '4%', bottom: 'auto', left: 'auto', right: '10%', align: 'right', rot: -5 },
+]
+
+// Un recorte de papel distinto por entrada: la tarjeta del hover se recorta
+// a su caja, así que cada sección del menú enseña una silueta propia.
+// La capa de arriba va en hueso, no en negro: los ítems caen sobre el panel
+// oscuro y una tarjeta negra sobre fondo negro no se veía. El filo de abajo
+// alterna de color para que además se distingan entre sí.
+const CARD_CUTS = [
+  { cut: 'both', base: 'crimson' },
+  { cut: 'tr', base: 'ink' },
+  { cut: 'bottom', base: 'crimson-hi', aggressive: true },
+  { cut: 'bl', base: 'ink' },
+  { cut: 'top', base: 'crimson' },
+  { cut: 'all', base: 'crimson-hi', aggressive: true },
 ]
 
 let audioCtx = null
@@ -70,7 +85,12 @@ export function PersonaMenu({ open, onClose, items, visits }) {
     return () => { document.body.style.overflow = '' }
   }, [open])
 
+  // Devuelve true solo si el ítem activo cambió de verdad. Si el puntero
+  // vuelve a entrar en el mismo ítem no se toca el estado: antes cada
+  // reentrada volvía a sonar el blip y remontaba el lavado de color, que es
+  // lo que dejaba el menú atascado reiniciando la animación.
   function activate(i, e) {
+    if (i === activeIdxRef.current) return false
     setActiveIdx(i)
     let x = '50%', y = '50%'
     if (e && typeof e.clientX === 'number' && (e.clientX || e.clientY)) {
@@ -82,6 +102,7 @@ export function PersonaMenu({ open, onClose, items, visits }) {
       y = ((r.top + r.height / 2) / window.innerHeight * 100).toFixed(1) + '%'
     }
     setWipeOrigin({ x, y })
+    return true
   }
 
   // Sin `activeIdx` en las dependencias a propósito: si no, este listener se
@@ -90,8 +111,8 @@ export function PersonaMenu({ open, onClose, items, visits }) {
     if (!open) return
     function onKey(e) {
       if (e.key === 'Escape') { onClose(); return }
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); activate((activeIdxRef.current + 1) % items.length); blip(340, 0.04) }
-      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); activate((activeIdxRef.current - 1 + items.length) % items.length); blip(340, 0.04) }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); if (activate((activeIdxRef.current + 1) % items.length)) blip(340, 0.04) }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); if (activate((activeIdxRef.current - 1 + items.length) % items.length)) blip(340, 0.04) }
       if (e.key === 'Enter') {
         const it = items[activeIdxRef.current]
         if (it && !it.href) { e.preventDefault(); setFlash(activeIdxRef.current); setTimeout(() => setFlash(-1), 700) }
@@ -101,18 +122,44 @@ export function PersonaMenu({ open, onClose, items, visits }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open, items, onClose])
 
+  // Parallax del puntero. Va normalizado a la mitad de la pantalla y topado
+  // a ±MAX grados: antes dividía entre 25 (hasta ±25°, exageradísimo) y
+  // además nunca volvía a cero, así que un movimiento brusco o sacar el
+  // ratón dejaba el menú torcido. Ahora escribe como mucho una vez por
+  // fotograma y regresa al centro al salir o al cerrar.
   useEffect(() => {
     if (!open || !window.matchMedia('(pointer: fine)').matches) return
-    function onMove(e) {
-      const xAxis = (window.innerWidth / 2 - e.pageX) / 25
-      const yAxis = (window.innerHeight / 2 - e.pageY) / 25
-      if (menuRef.current) menuRef.current.style.transform = `rotateY(${-xAxis}deg) rotateX(${yAxis}deg) translateZ(10px)`
-      if (slabRef.current) slabRef.current.style.transform = `translateX(${xAxis * 1.2}px) translateY(${yAxis * 1.2}px)`
-      if (bgTextRef.current) bgTextRef.current.style.transform = `rotate(${bgRotRef.current}deg) translateX(${xAxis * -1}px) translateY(${yAxis * -1}px)`
+    const MAX = 3
+    let raf = 0, tx = 0, ty = 0
+    // Los refs se leen en el momento de escribir, no al montar el efecto:
+    // <nav> se remonta al abrir (lleva key={openCount}), así que un nodo
+    // guardado aquí quedaría apuntando al viejo y el parallax no haría nada.
+    function apply() {
+      raf = 0
+      if (menuRef.current) menuRef.current.style.transform = `rotateY(${-tx}deg) rotateX(${ty}deg)`
+      if (slabRef.current) slabRef.current.style.transform = `translate3d(${tx * 2.2}px,${ty * 2.2}px,0)`
+      if (bgTextRef.current) bgTextRef.current.style.transform = `rotate(${bgRotRef.current}deg) translate3d(${tx * -3}px,${ty * -3}px,0)`
     }
+    function schedule() { if (!raf) raf = requestAnimationFrame(apply) }
+    function onMove(e) {
+      const nx = (window.innerWidth / 2 - e.clientX) / (window.innerWidth / 2)
+      const ny = (window.innerHeight / 2 - e.clientY) / (window.innerHeight / 2)
+      tx = Math.max(-1, Math.min(1, nx)) * MAX
+      ty = Math.max(-1, Math.min(1, ny)) * MAX
+      schedule()
+    }
+    function recenter() { tx = 0; ty = 0; schedule() }
+    // Se parte del centro cada vez que se abre, así no se hereda la
+    // inclinación con la que se cerró la vez anterior.
+    apply()
     const el = containerRef.current
     el?.addEventListener('pointermove', onMove)
-    return () => el?.removeEventListener('pointermove', onMove)
+    el?.addEventListener('pointerleave', recenter)
+    return () => {
+      cancelAnimationFrame(raf)
+      el?.removeEventListener('pointermove', onMove)
+      el?.removeEventListener('pointerleave', recenter)
+    }
   }, [open])
 
   function pick(i, item, e) {
@@ -170,7 +217,11 @@ export function PersonaMenu({ open, onClose, items, visits }) {
         {items.map((item, i) => {
           const body = (
             <>
-              <div className="pmenu-layer-1" /><div className="pmenu-layer-2" />
+              <span className="pmenu-card torn-host" aria-hidden="true">
+                <TornPaper cut={CARD_CUTS[i % CARD_CUTS.length].cut}
+                  base={CARD_CUTS[i % CARD_CUTS.length].base} top="paper"
+                  aggressive={CARD_CUTS[i % CARD_CUTS.length].aggressive} />
+              </span>
               <div className="pmenu-text"><ScatterText text={item.key.toUpperCase()} /></div>
               <span className="pmenu-subtext">
                 {item.internal ? 'entrar →' : item.href ? 'abrir ↗' : (flash === i ? '¡próximamente!' : 'próximamente')}
@@ -180,7 +231,7 @@ export function PersonaMenu({ open, onClose, items, visits }) {
           const shared = {
             className: `pmenu-item ${item.internal ? 'internal' : ''} ${flash === i ? 'flash' : ''}`,
             style: { '--item-accent': ACCENTS[i % ACCENTS.length] },
-            onMouseEnter: (e) => { activate(i, e); blip(340, 0.04) },
+            onMouseEnter: (e) => { if (activate(i, e)) blip(340, 0.04) },
             onFocus: (e) => activate(i, e),
             onClick: (e) => pick(i, item, e),
           }
