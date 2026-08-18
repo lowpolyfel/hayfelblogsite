@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react'
-import { Icon } from '../../../shared/assets/icons/Icon'
+import { Icon } from '../assets/icons/Icon'
 import './persona-menu.css'
 
 // Letras dispersas al azar que se "enderezan" al hacer hover. Memoizado:
