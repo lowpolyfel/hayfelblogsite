@@ -4,6 +4,7 @@ import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
 import { Starfield } from '../../shared/assets/patterns/Starfield'
 import { Reveal } from '../../shared/ui/Reveal'
 import { BootScreen } from '../../shared/ui/BootScreen'
+import { TornFilters, TornPaper } from '../../shared/ui/TornPaper'
 import { confetti } from '../../shared/lib/confetti'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
@@ -16,6 +17,11 @@ const BG_PRESETS = [
   { variant: 0, red: '#c8102e', label: 'crimson · deriva' },
   { variant: 1, red: '#1450c8', label: 'azul · lluvia' },
   { variant: 2, red: '#c89010', label: 'dorado · galaxia' },
+]
+
+// Un corte de papel distinto por tarjeta, para que ninguna se repita.
+const POST_CUTS = [
+  { base: 'crimson' }, { base: 'ink' }, { base: 'crimson-hi' }, { base: 'ink' },
 ]
 
 export function ScrapbookPage() {
@@ -43,6 +49,7 @@ export function ScrapbookPage() {
 
   return (
     <div className="scb">
+      <TornFilters />
       <BootScreen lines={bootLines} onDone={bootDone} />
 
       <Starfield className="scb-bg" variant={bg.variant} red={bg.red} paused={navOpen || booting} />
@@ -64,7 +71,8 @@ export function ScrapbookPage() {
 
       {/* ---------- HERO: panel roto + título con relleno de imagen ---------- */}
       <section className="scb-hero">
-        <Reveal as="div" variant="scale" className="scb-heropanel scb-band">
+        <Reveal as="div" variant="scale" className="scb-heropanel torn-host">
+          <TornPaper cut="both" base="crimson" top="ink2" />
           {/* Capa lista para una foto: basta definir --hero-photo sobre .scb */}
           <div className="scb-herophoto" aria-hidden="true" />
           <div className="scb-heroinner">
@@ -88,7 +96,8 @@ export function ScrapbookPage() {
       </div>
 
       {/* ---------- STATEMENT ---------- */}
-      <Reveal as="section" variant="up" className="scb-statement scb-band">
+      <Reveal as="section" variant="up" className="scb-statement torn-host">
+        <TornPaper cut="both" base="paper" top="crimson" />
         <span className="scb-sticker star" aria-hidden="true" />
         <span className="scb-kicker on-crimson">01 — MANIFIESTO</span>
         <h2>{statement}</h2>
@@ -96,9 +105,11 @@ export function ScrapbookPage() {
       </Reveal>
 
       {/* ---------- SOBRE MI ---------- */}
-      <section className="scb-aboutwrap scb-band">
+      <section className="scb-aboutwrap torn-host">
+        <TornPaper cut="top" base="crimson" top="ink2" />
         <Reveal as="div" variant="left" className="scb-about">
-          <div className="scb-about-photo torn-a">
+          <div className="scb-about-photo torn-host">
+            <TornPaper cut="all" base="crimson" top="ink" hard sm />
             <PixelSprite accent="#c8102e" eye="#ffffff" />
           </div>
           <div className="scb-about-copy">
@@ -112,14 +123,16 @@ export function ScrapbookPage() {
       </section>
 
       {/* ---------- ENTRADAS RECIENTES ---------- */}
-      <section className="scb-posts scb-band" id="posts">
+      <section className="scb-posts torn-host" id="posts">
+        <TornPaper cut="both" base="crimson" top="paper" />
         <Reveal as="div" variant="up" className="scb-sectionhead">
           <div><span className="scb-kicker on-paper">03 — BITÁCORA</span><h3>ENTRADAS RECIENTES</h3></div>
           <span className="scb-sectionnote">sin feed, sin algoritmo</span>
         </Reveal>
         <div className="scb-postgrid">
           {posts.map((p, i) => (
-            <Reveal as="article" key={p.title} variant="up" delay={i * 90} className={`scb-postcard torn-${'abcd'[i % 4]} rot-${i % 4}`}>
+            <Reveal as="article" key={p.title} variant="up" delay={i * 90} className={`scb-postcard torn-host rot-${i % 4}`}>
+              <TornPaper cut="all" base={POST_CUTS[i % 4].base} top="white" hard sm />
               <span className="cat">{p.category}</span>
               <h4>{p.title}</h4>
               <span className="date">{p.date}</span>
@@ -170,7 +183,8 @@ export function ScrapbookPage() {
       </section>
 
       {/* ---------- HISTORIAS (guestbook) ---------- */}
-      <section className="scb-stories scb-band" id="firmas">
+      <section className="scb-stories torn-host" id="firmas">
+        <TornPaper cut="bottom" base="paper" top="ink2" />
         <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
           <div><span className="scb-kicker">05 — VISITAS</span><h3>HISTORIAS</h3></div>
           <span className="scb-sectionnote">lo que dejó la gente al pasar</span>
@@ -183,7 +197,8 @@ export function ScrapbookPage() {
             </Reveal>
           ))}
         </div>
-        <Reveal as="div" variant="up" className="scb-signcard torn-b">
+        <Reveal as="div" variant="up" className="scb-signcard torn-host">
+          <TornPaper cut="all" base="crimson" top="paper" hard sm />
           <input value={gname} onChange={(e) => setGname(e.target.value)} placeholder="tu nombre" maxLength={18} aria-label="Tu nombre" />
           <input value={gmsg} onChange={(e) => setGmsg(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sign()}
             placeholder="deja tu historia..." maxLength={140} aria-label="Tu mensaje" />
@@ -192,7 +207,8 @@ export function ScrapbookPage() {
       </section>
 
       {/* ---------- GALERÍA ---------- */}
-      <section className="scb-gallery scb-band">
+      <section className="scb-gallery torn-host">
+        <TornPaper cut="top" base="crimson" top="ink" />
         <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
           <div><span className="scb-kicker">06 — GALERÍA</span><h3>PEDAZOS SUELTOS</h3></div>
           <span className="scb-sectionnote">recortes sin orden</span>
@@ -207,7 +223,8 @@ export function ScrapbookPage() {
       </section>
 
       {/* ---------- SÍGUEME ---------- */}
-      <section className="scb-social scb-band">
+      <section className="scb-social torn-host">
+        <TornPaper cut="both" base="paper" top="ink2" />
         <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
           <div><span className="scb-kicker">07 — REDES</span><h3>SÍGUEME</h3></div>
           <span className="scb-sectionnote">{notice}</span>
