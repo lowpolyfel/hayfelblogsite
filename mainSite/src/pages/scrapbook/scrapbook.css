@@ -13,7 +13,6 @@
   --display-font:'Archivo Black',Impact,'Arial Black',sans-serif;
   --mono-font:'Space Mono',ui-monospace,'Courier New',monospace;
   --y2k-font:'Righteous',ui-rounded,'Arial Black',sans-serif;
-  --script-font:'Mr Dafoe',cursive;
   --jp-font:'Noto Sans JP',ui-sans-serif,sans-serif;
   --edge:4px solid var(--ink);
   --hard:10px 10px 0 var(--ink);
@@ -81,15 +80,7 @@
 .scb-heroinner{ position:relative; z-index:2; text-align:center; }
 .scb-title{
   margin:0; font-family:var(--display-font); line-height:.86; letter-spacing:-3px;
-  font-size:clamp(74px,17vw,250px);
-  /* El texto no es plano: lo rellena una imagen (o el degradado de reserva)
-     recortada a la forma de las letras — se ve "hacia dentro". Para cambiarla
-     basta definir --hero-word-img sobre .scb. */
-  background-image:var(--hero-word-img,linear-gradient(150deg,#ffffff 0%,#ffffff 38%,var(--crimson-hi) 39%,var(--crimson) 78%,var(--crimson-2) 100%));
-  background-size:cover; background-position:center;
-  -webkit-background-clip:text; background-clip:text;
-  color:transparent; -webkit-text-fill-color:transparent;
-  -webkit-text-stroke:3px var(--paper);
+  font-size:clamp(74px,17vw,250px); color:#fff;
 }
 .scb-tagline{ margin:18px 0 0; font-family:var(--mono-font); font-size:13px; letter-spacing:2px; color:var(--paper); }
 .scb-herochips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:20px; }
@@ -106,20 +97,12 @@
   position:relative; z-index:2; height:380px; overflow:hidden; pointer-events:none;
 }
 .scb-tape{
-  position:absolute; left:-38%; width:176%; overflow:hidden; white-space:nowrap;
-  padding:13px 0; border-top:4px solid var(--ink); border-bottom:4px solid var(--ink);
-}
-.scb-tape span{
-  display:inline-block; padding-left:100%;
-  font-family:var(--display-font); font-size:19px; letter-spacing:3px;
-  animation:scbSlide 32s linear infinite;
+  position:absolute; left:-38%; width:176%; height:52px;
+  border-top:4px solid var(--ink); border-bottom:4px solid var(--ink);
 }
 /* Negra y hueso: las dos contrastan contra el rojo del fondo de estrellas */
-.scb-tape.t1{ top:30%; transform:rotate(-30deg); background:var(--ink); color:var(--paper);
-  border-color:var(--crimson); }
-.scb-tape.t2{ top:56%; transform:rotate(31deg); background:var(--paper); color:var(--ink); }
-.scb-tape.t2 span{ animation-duration:38s; animation-direction:reverse; }
-@keyframes scbSlide{ to{ transform:translateX(-100%); } }
+.scb-tape.t1{ top:30%; transform:rotate(-30deg); background:var(--ink); border-color:var(--crimson); }
+.scb-tape.t2{ top:56%; transform:rotate(31deg); background:var(--paper); }
 
 /* ---------- STATEMENT ---------- */
 .scb-statement{
@@ -267,8 +250,7 @@
 
 /* ---------- GALERÍA ---------- */
 .scb-gallery{ z-index:2; padding:80px 20px; }
-.scb-gallerywrap{ position:relative; max-width:1080px; margin:0 auto; }
-.scb-gallerygrid{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:16px; }
+.scb-gallerygrid{ max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:16px; }
 .scb-gallerygrid .tile{ aspect-ratio:1; display:grid; place-items:center; border:3px solid var(--ink-3); }
 .tile.tone-crimson{ background:var(--crimson); color:#fff; }
 .tile.tone-paper{ background:var(--paper); color:var(--ink); }
@@ -290,7 +272,7 @@
 
 /* ---------- FOOTER ---------- */
 .scb-footer{ position:relative; z-index:2; background:var(--ink); border-top:5px solid var(--crimson); padding:36px 20px 30px; text-align:center; }
-.scb-footerword{ font-size:clamp(48px,14vw,160px); margin-bottom:16px; }
+.scb-footerword{ font-family:var(--display-font); font-size:clamp(48px,16vw,180px); line-height:.85; color:#fff; letter-spacing:-4px; }
 .scb-footmeta{ margin-top:18px; display:flex; flex-wrap:wrap; gap:18px; justify-content:center; align-items:center;
   font-family:var(--mono-font); font-size:11px; letter-spacing:1px; color:var(--paper-dim); }
 .scb-footmeta button{ all:unset; cursor:pointer; color:var(--crimson-hi); }
@@ -299,19 +281,8 @@
 .scb-footmeta a:hover{ color:var(--crimson-hi); }
 
 /* ---------- colocación de las piezas Y2K ---------- */
-.scb-globe{ opacity:.55; }
-.scb-globe.g1{ top:-40px; left:-40px; width:190px; height:190px; }
-.scb-globe.g2{ bottom:-110px; right:-70px; width:360px; height:360px; opacity:.4; }
 .scb-globe.g3{ top:30px; right:-60px; width:210px; height:210px; opacity:.35; }
-.scb-blob{ top:11%; right:-34px; width:130px; height:160px; fill:var(--crimson-2); opacity:.9; }
-
-.scb-scriptword{
-  position:absolute; top:36%; left:4%; font-size:clamp(40px,6.5vw,92px);
-  transform:rotate(-15deg); z-index:3;
-}
 .scb-herojp{ margin:22px 0 0; }
-.scb-photoscript{ position:absolute; bottom:-30px; left:-26px; font-size:66px; z-index:6; transform:rotate(-12deg); }
-.scb-galleryscript{ position:absolute; bottom:-26px; right:16px; font-size:70px; z-index:5; transform:rotate(-8deg); }
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width:900px){
@@ -341,11 +312,7 @@
   .scb-slots{ grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:112px; }
   .slot-tall{ grid-row:span 1; } .slot-wide, .slot-wide3{ grid-column:span 2; }
   .scb-glassword{ font-size:56px; right:10px; }
-  .scb-globe.g2, .scb-globe.g3, .scb-blob{ display:none; }
-  .scb-globe.g1{ width:120px; height:120px; top:-24px; left:-24px; }
-  .scb-scriptword{ font-size:44px; left:3%; top:58%; }
-  .scb-photoscript{ font-size:44px; bottom:-22px; left:-12px; }
-  .scb-galleryscript{ font-size:46px; bottom:-18px; }
+  .scb-globe.g3{ display:none; }
 }
 @media (prefers-reduced-motion:reduce){
   .scb *,.scb *::before,.scb *::after{

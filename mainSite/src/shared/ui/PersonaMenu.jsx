@@ -1,10 +1,11 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import { Icon } from '../assets/icons/Icon'
+import { Starfield } from '../assets/patterns/Starfield'
 import './persona-menu.css'
 
 // Letras dispersas al azar que se "enderezan" al hacer hover. Memoizado:
 // `text` no cambia entre hovers, así que no hay que recalcular el jitter de
-// los 5 ítems cada vez que activeIdx cambia en otro lado.
+// los ítems cada vez que activeIdx cambia en otro lado.
 const ScatterText = memo(function ScatterText({ text }) {
   const chars = [...text].map((ch, i) => {
     const rot = (Math.random() * 16) - 8
@@ -15,13 +16,11 @@ const ScatterText = memo(function ScatterText({ text }) {
   return <>{chars}</>
 })
 
-// Un color de acento distinto por ítem — el fondo entero (puntos, texto
-// gigante, hover) cambia de paleta según lo que esté en foco, como si cada
-// entrada del menú fuera una pantalla distinta.
+// Un color de acento distinto por ítem — el lavado de color sobre el fondo
+// de estrellas cambia de paleta según lo que esté en foco.
 const ACCENTS = ['#c8102e', '#7b3ff2', '#00b0c8', '#c89010', '#0f9e6e']
 
-// Una posición/rotación de pantalla distinta por ítem para el texto gigante
-// de fondo — que "INICIO" no viva siempre en la misma esquina que "FAQ".
+// Una posición/rotación distinta por ítem para el texto gigante de fondo.
 const BG_POSITIONS = [
   { top: 'auto', bottom: '0%', left: 'auto', right: '0%', align: 'right', rot: -8 },
   { top: '2%', bottom: 'auto', left: '-2%', right: 'auto', align: 'left', rot: -6 },
@@ -56,9 +55,8 @@ export function PersonaMenu({ open, onClose, items, visits }) {
   const bgRotRef = useRef(BG_POSITIONS[0].rot)
   const containerRef = useRef(null)
   const menuRef = useRef(null)
-  const silhouetteRef = useRef(null)
+  const slabRef = useRef(null)
   const bgTextRef = useRef(null)
-  const halftoneRef = useRef(null)
 
   activeIdxRef.current = activeIdx
   bgRotRef.current = BG_POSITIONS[activeIdx % BG_POSITIONS.length].rot
@@ -87,8 +85,7 @@ export function PersonaMenu({ open, onClose, items, visits }) {
   }
 
   // Sin `activeIdx` en las dependencias a propósito: si no, este listener se
-  // desmonta y remonta en cada hover (dispara en cada cambio de activeIdx).
-  // Lee el valor actual desde el ref en su lugar.
+  // desmonta y remonta en cada hover. Lee el valor actual desde el ref.
   useEffect(() => {
     if (!open) return
     function onKey(e) {
@@ -110,9 +107,8 @@ export function PersonaMenu({ open, onClose, items, visits }) {
       const xAxis = (window.innerWidth / 2 - e.pageX) / 25
       const yAxis = (window.innerHeight / 2 - e.pageY) / 25
       if (menuRef.current) menuRef.current.style.transform = `rotateY(${-xAxis}deg) rotateX(${yAxis}deg) translateZ(10px)`
-      if (silhouetteRef.current) silhouetteRef.current.style.transform = `translateX(${xAxis * 1.5}px) translateY(${yAxis * 1.5}px)`
+      if (slabRef.current) slabRef.current.style.transform = `translateX(${xAxis * 1.2}px) translateY(${yAxis * 1.2}px)`
       if (bgTextRef.current) bgTextRef.current.style.transform = `rotate(${bgRotRef.current}deg) translateX(${xAxis * -1}px) translateY(${yAxis * -1}px)`
-      if (halftoneRef.current) halftoneRef.current.style.transform = `rotate(-15deg) translateX(${xAxis * -0.5}px) translateY(${yAxis * -0.5}px)`
     }
     const el = containerRef.current
     el?.addEventListener('pointermove', onMove)
@@ -122,7 +118,7 @@ export function PersonaMenu({ open, onClose, items, visits }) {
   function pick(i, item, e) {
     activate(i, e)
     if (!item.href) { e.preventDefault(); setFlash(i); blip(180, 0.12); setTimeout(() => setFlash(-1), 700) }
-    else blip(520, 0.05)
+    else { blip(520, 0.05); if (item.internal) onClose() }
   }
 
   const activeItem = items[activeIdx]
@@ -132,13 +128,22 @@ export function PersonaMenu({ open, onClose, items, visits }) {
   return (
     <div ref={containerRef} className={`pmenu ${open ? 'open' : ''}`} role="dialog" aria-modal="true"
       aria-hidden={!open} aria-label="Menú de navegación">
+
+      {/* El mismo fondo de estrellas del sitio; los lavados de color van
+          encima en semitransparente para que se sigan viendo. */}
+      <Starfield className="pmenu-stars" variant={0} red={settledAccent} paused={!open} />
+
       <div className="pmenu-basecolor" style={{ background: settledAccent }} aria-hidden="true" />
       <div key={activeIdx} className="pmenu-wipe" aria-hidden="true"
         style={{ background: accent, '--wx': wipeOrigin.x, '--wy': wipeOrigin.y }}
         onAnimationEnd={() => setSettledAccent(accent)} />
 
-      <div className="pmenu-halftone" ref={halftoneRef} aria-hidden="true" />
-      <div className="pmenu-silhouette" ref={silhouetteRef} aria-hidden="true" />
+      {/* Panel de papel roto: rectángulo regular con el filo izquierdo rasgado */}
+      <div className="pmenu-slab" ref={slabRef} aria-hidden="true">
+        <span className="pmenu-slab-base" />
+        <span className="pmenu-slab-top" />
+      </div>
+
       <div key={`t${activeIdx}`} className="pmenu-bgtext" ref={bgTextRef} aria-hidden="true"
         style={{ top: pos.top, bottom: pos.bottom, left: pos.left, right: pos.right, textAlign: pos.align, '--bgrot': `${pos.rot}deg` }}>
         {activeItem?.key}
@@ -155,36 +160,34 @@ export function PersonaMenu({ open, onClose, items, visits }) {
         <span className="eyebrow">HAYFEL</span>
         <span className="sub">navegación</span>
         <span className="big">{activeItem?.key?.toUpperCase()}</span>
-        <span className="foot">{activeItem?.href ? 'ABRE EN PESTAÑA NUEVA' : 'PRÓXIMAMENTE'}</span>
+        <span className="foot">
+          {activeItem?.internal ? 'IR A LA PÁGINA' : activeItem?.href ? 'ABRE EN PESTAÑA NUEVA' : 'PRÓXIMAMENTE'}
+        </span>
         <span className="count">¤ {String(visits).padStart(6, '0')} VISITAS</span>
       </div>
 
-      <div className="pmenu-hud-status">
-        <div className="dot" /><div className="line" /><div className="text">STATUS: ONLINE</div>
-      </div>
-
       <nav className="pmenu-items" ref={menuRef} key={openCount}>
-        {items.map((item, i) => (
-          item.href ? (
-            <a key={item.key} href={item.href} target="_blank" rel="noreferrer" className={`pmenu-item ${flash === i ? 'flash' : ''}`}
-              style={{ '--item-accent': ACCENTS[i % ACCENTS.length] }}
-              onMouseEnter={(e) => { activate(i, e); blip(340, 0.04) }} onFocus={(e) => activate(i, e)}
-              onClick={(e) => pick(i, item, e)}>
+        {items.map((item, i) => {
+          const body = (
+            <>
               <div className="pmenu-layer-1" /><div className="pmenu-layer-2" />
               <div className="pmenu-text"><ScatterText text={item.key.toUpperCase()} /></div>
-              <span className="pmenu-subtext">abrir ↗</span>
-            </a>
-          ) : (
-            <span key={item.key} tabIndex={0} className={`pmenu-item pending ${flash === i ? 'flash' : ''}`}
-              style={{ '--item-accent': ACCENTS[i % ACCENTS.length] }}
-              onMouseEnter={(e) => { activate(i, e); blip(340, 0.04) }} onFocus={(e) => activate(i, e)}
-              onClick={(e) => pick(i, item, e)}>
-              <div className="pmenu-layer-1" /><div className="pmenu-layer-2" />
-              <div className="pmenu-text"><ScatterText text={item.key.toUpperCase()} /></div>
-              <span className="pmenu-subtext">{flash === i ? '¡próximamente!' : 'próximamente'}</span>
-            </span>
+              <span className="pmenu-subtext">
+                {item.internal ? 'entrar →' : item.href ? 'abrir ↗' : (flash === i ? '¡próximamente!' : 'próximamente')}
+              </span>
+            </>
           )
-        ))}
+          const shared = {
+            className: `pmenu-item ${item.internal ? 'internal' : ''} ${flash === i ? 'flash' : ''}`,
+            style: { '--item-accent': ACCENTS[i % ACCENTS.length] },
+            onMouseEnter: (e) => { activate(i, e); blip(340, 0.04) },
+            onFocus: (e) => activate(i, e),
+            onClick: (e) => pick(i, item, e),
+          }
+          if (item.href && item.internal) return <a key={item.key} {...shared} href={item.href}>{body}</a>
+          if (item.href) return <a key={item.key} {...shared} href={item.href} target="_blank" rel="noreferrer">{body}</a>
+          return <span key={item.key} {...shared} tabIndex={0}>{body}</span>
+        })}
       </nav>
     </div>
   )

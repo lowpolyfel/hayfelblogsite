@@ -1,7 +1,7 @@
 /* Menú a pantalla completa.
-   Sin text-shadow en ningún lado: el relieve sale de contornos
-   (-webkit-text-stroke) y de las capas de color, no de sombras.
-   Tipografías: las mismas variables del sitio (--display-font/--mono-font). */
+   Fondo: el mismo campo de estrellas del sitio, con los lavados de color
+   encima en semitransparente para que se siga viendo.
+   Sin text-shadow: el relieve sale de contornos (-webkit-text-stroke). */
 
 .pmenu{
   position:fixed; inset:0; z-index:8500; overflow:hidden;
@@ -15,32 +15,34 @@
 .pmenu.open{ opacity:1; visibility:visible; pointer-events:auto; }
 .pmenu *{ box-sizing:border-box; }
 
-/* ---------- capas de color: "traga" el nuevo color desde el punto del hover ---------- */
-.pmenu-basecolor, .pmenu-wipe{ position:absolute; inset:0; z-index:0; }
+.pmenu-stars{ position:absolute; inset:0; width:100%; height:100%; z-index:0; display:block; }
+
+/* ---------- lavados de color: "tragan" el color nuevo desde el hover ---------- */
+.pmenu-basecolor, .pmenu-wipe{ position:absolute; inset:0; z-index:1; opacity:.38; }
 .pmenu-wipe{
   clip-path:circle(0% at var(--wx,50%) var(--wy,50%));
   animation:pmSwallow .65s cubic-bezier(.2,.8,.2,1) forwards;
 }
 @keyframes pmSwallow{ to{ clip-path:circle(150% at var(--wx,50%) var(--wy,50%)); } }
 
-/* ---------- fondo: mancha de puntos + silueta + palabra gigante ---------- */
-.pmenu-halftone{
-  position:absolute; inset:-50%; z-index:1;
-  background-image:radial-gradient(var(--ink) 2.5px, transparent 2.5px);
-  background-size:25px 25px; transform:rotate(-15deg);
-  animation:pmDots 20s linear infinite; opacity:.75; pointer-events:none;
-}
-@keyframes pmDots{ to{ background-position:500px 500px; } }
-.pmenu-silhouette{
-  position:absolute; bottom:-10%; right:-5%; width:65vw; height:110vh; z-index:1;
-  background:var(--ink);
-  clip-path:polygon(25% 100%,0% 50%,35% 30%,30% 15%,80% 0,100% 25%,100% 100%);
+/* ---------- panel de papel roto (antes era una silueta irregular) ----------
+   Rectángulo regular pegado a la derecha; lo único irregular es el filo
+   izquierdo, que lo rasga el mismo filtro de ruido del resto del sitio. */
+.pmenu-slab{
+  position:absolute; top:-4%; right:-4%; width:56%; height:108%; z-index:2;
   pointer-events:none;
 }
+.pmenu-slab-base, .pmenu-slab-top{
+  position:absolute; top:0; bottom:0; right:0; display:block;
+}
+.pmenu-slab-base{ left:0; background:var(--paper); filter:url(#torn-base); }
+.pmenu-slab-top{ left:14px; background:var(--ink); filter:url(#torn-top); }
+
+/* ---------- palabra gigante de fondo ---------- */
 .pmenu-bgtext{
-  position:absolute; z-index:2; max-width:70vw; font-size:clamp(90px,24vw,480px);
+  position:absolute; z-index:3; max-width:70vw; font-size:clamp(90px,24vw,480px);
   color:transparent; text-transform:uppercase; overflow-wrap:break-word;
-  -webkit-text-stroke:4px rgba(255,255,255,.16); line-height:.8;
+  -webkit-text-stroke:4px rgba(255,255,255,.18); line-height:.8;
   transform:rotate(var(--bgrot,-8deg));
   pointer-events:none; letter-spacing:-4px;
   animation:pmBgPop .4s cubic-bezier(.2,.8,.2,1) both;
@@ -52,45 +54,36 @@
 
 /* ---------- cinta MENU + botón cerrar ---------- */
 .pmenu-ribbon{
-  position:absolute; top:26px; left:-60px; width:280px;
+  position:absolute; top:26px; left:-60px; width:280px; z-index:6;
   background:var(--ink); color:#fff; text-align:center; padding:9px 0;
   font-family:var(--mono-font); font-size:13px; font-weight:700; letter-spacing:6px;
-  transform:rotate(-6deg); z-index:5;
+  transform:rotate(-6deg);
 }
 .pmenu-close{
-  all:unset; position:absolute; top:18px; right:18px; z-index:6; cursor:pointer;
+  all:unset; position:absolute; top:18px; right:18px; z-index:7; cursor:pointer;
   display:flex; align-items:center; gap:6px; padding:10px 15px;
   background:var(--ink); color:#fff; font-family:var(--mono-font); font-weight:700;
   font-size:11px; letter-spacing:2px; border:3px solid #fff;
 }
 .pmenu-close:hover{ background:#fff; color:var(--ink); }
 
-/* ---------- bloque de datos a la izquierda (estilo pantalla de pausa) ---------- */
+/* ---------- ficha lateral ---------- */
 .pmenu-info{
-  position:absolute; left:6vw; top:50%; transform:translateY(-50%); z-index:6;
-  max-width:min(320px,34vw); pointer-events:none;
+  position:absolute; left:5vw; top:50%; transform:translateY(-50%); z-index:6;
+  max-width:min(320px,32vw); pointer-events:none;
   background:var(--paper); border:4px solid var(--ink); padding:16px 18px 18px;
 }
 .pmenu-info .eyebrow{ display:block; font-family:var(--mono-font); font-size:12px; font-weight:700; letter-spacing:3px; color:var(--ink); }
 .pmenu-info .sub{ display:block; font-family:var(--mono-font); font-size:11px; letter-spacing:1px; color:var(--ink); opacity:.7; margin-bottom:10px; }
-.pmenu-info .big{ display:block; font-family:var(--display-font); font-size:clamp(32px,4.2vw,54px); line-height:.9; color:var(--ink); letter-spacing:-2px; }
+.pmenu-info .big{ display:block; font-family:var(--display-font); font-size:clamp(30px,3.8vw,50px); line-height:.9; color:var(--ink); letter-spacing:-2px; }
 .pmenu-info .foot{ display:block; margin-top:14px; padding-top:10px; border-top:2px solid var(--ink);
   font-family:var(--mono-font); font-size:10px; letter-spacing:1px; color:var(--ink); }
 .pmenu-info .count{ display:block; margin-top:6px; font-family:var(--mono-font); font-size:10px; letter-spacing:1px; color:var(--ink); opacity:.65; }
 
-/* ---------- HUD de estado ---------- */
-.pmenu-hud-status{
-  position:absolute; bottom:9%; right:5%; display:flex; align-items:center; gap:10px;
-  transform:rotate(-10deg); z-index:5;
-}
-.pmenu-hud-status .dot{ width:16px; height:16px; border:3px solid var(--paper); border-radius:50%; background:var(--ink); }
-.pmenu-hud-status .line{ width:110px; height:3px; background:var(--paper); }
-.pmenu-hud-status .text{ font-family:var(--mono-font); font-size:11px; color:var(--paper); letter-spacing:2px; font-weight:700; }
-
 /* ---------- ítems: cascada diagonal, activo sólido / resto hueco ---------- */
 .pmenu-items{
-  position:relative; width:min(760px,80vw); height:min(600px,70vh);
-  transform-style:preserve-3d; z-index:10; margin-left:auto; margin-right:6vw;
+  position:relative; width:min(720px,78vw); height:min(620px,74vh);
+  transform-style:preserve-3d; z-index:10; margin-left:auto; margin-right:5vw;
 }
 
 .pmenu-item{
@@ -99,22 +92,29 @@
   outline-offset:6px;
   animation:pmSmash .4s cubic-bezier(.1,.9,.2,1) forwards; opacity:0;
 }
-.pmenu-item:nth-child(1){ animation-delay:0s; } .pmenu-item:nth-child(2){ animation-delay:.08s; }
-.pmenu-item:nth-child(3){ animation-delay:.16s; } .pmenu-item:nth-child(4){ animation-delay:.24s; }
-.pmenu-item:nth-child(5){ animation-delay:.32s; }
+.pmenu-item:nth-child(1){ animation-delay:0s; } .pmenu-item:nth-child(2){ animation-delay:.07s; }
+.pmenu-item:nth-child(3){ animation-delay:.14s; } .pmenu-item:nth-child(4){ animation-delay:.21s; }
+.pmenu-item:nth-child(5){ animation-delay:.28s; } .pmenu-item:nth-child(6){ animation-delay:.35s; }
 @keyframes pmSmash{
   0%{ opacity:0; transform:scale(2) translateX(-70px); filter:blur(10px); }
   100%{ opacity:1; filter:blur(0); }
 }
 
-.pmenu-layer-1, .pmenu-layer-2{ position:absolute; inset:-12px -34px; transform:scaleX(0); transform-origin:left center; pointer-events:none; }
-.pmenu-layer-1{ background:var(--paper); z-index:1; clip-path:polygon(0 15%,100% 0,95% 100%,5% 90%); transition:transform .15s cubic-bezier(.1,.9,.2,1); }
-.pmenu-layer-2{ background:var(--ink); z-index:2; clip-path:polygon(5% 0,95% 5%,100% 90%,0 100%); transition:transform .2s cubic-bezier(.1,.9,.2,1) .05s; }
+/* El "pedazo roto" del hover: ahora son dos capas de papel rasgado con el
+   mismo filtro de ruido del sitio, en vez de polígonos recortados. */
+.pmenu-layer-1, .pmenu-layer-2{
+  position:absolute; inset:-14px -38px; transform:scaleX(0);
+  transform-origin:left center; pointer-events:none;
+}
+.pmenu-layer-1{ background:var(--paper); z-index:1; filter:url(#torn-base);
+  transition:transform .15s cubic-bezier(.1,.9,.2,1); }
+.pmenu-layer-2{ background:var(--ink); z-index:2; inset:-8px -30px; filter:url(#torn-top);
+  transition:transform .2s cubic-bezier(.1,.9,.2,1) .05s; }
 
-/* Hueco por defecto: solo contorno, como los ítems inactivos de la referencia */
+/* Hueco por defecto: solo contorno */
 .pmenu-text{
   position:relative; z-index:3; display:flex; line-height:.82; letter-spacing:-2px;
-  font-size:calc(4.4rem * var(--size,1));
+  font-size:calc(4rem * var(--size,1));
   color:transparent; -webkit-text-fill-color:transparent;
   -webkit-text-stroke:3px var(--paper);
   transition:all .2s cubic-bezier(.175,.885,.32,1.275);
@@ -123,7 +123,7 @@
 
 .pmenu-subtext{
   position:absolute; bottom:-8px; right:-8px; z-index:4;
-  font-family:var(--mono-font); font-size:.75rem; letter-spacing:1px; font-weight:700;
+  font-family:var(--mono-font); font-size:.72rem; letter-spacing:1px; font-weight:700;
   color:var(--paper); background:var(--ink); padding:4px 10px; border:2px solid var(--paper);
   opacity:0; pointer-events:none;
   transition:all .2s cubic-bezier(.175,.885,.32,1.275);
@@ -142,28 +142,58 @@
 .pmenu-item:active{ transform:scale(.96) translateZ(0); }
 .pmenu-item.flash .pmenu-layer-2{ background:var(--paper); }
 .pmenu-item.flash .pmenu-text{ color:var(--ink); -webkit-text-fill-color:var(--ink); -webkit-text-stroke:3px var(--paper); }
+/* El que lleva a otra página se marca desde el principio */
+.pmenu-item.internal .pmenu-text{ -webkit-text-stroke-color:var(--crimson-hi); }
+.pmenu-item.internal .pmenu-subtext{ opacity:.9; background:var(--crimson); bottom:-24px; right:-2px; }
 
-/* cascada diagonal: cada ítem baja y se corre a la derecha, y encoge */
-@media (min-width:761px){
+/* cascada diagonal: cada ítem baja, se corre a la derecha y encoge */
+@media (min-width:901px){
   .pmenu-item{ position:absolute; }
-  .pmenu-item:nth-child(1){ top:0%;  left:0%;  --size:1.26; z-index:5; }
-  .pmenu-item:nth-child(2){ top:18%; left:10%; --size:1.10; z-index:4; }
-  .pmenu-item:nth-child(3){ top:36%; left:20%; --size:.98;  z-index:3; }
-  .pmenu-item:nth-child(4){ top:53%; left:30%; --size:.88;  z-index:2; }
-  .pmenu-item:nth-child(5){ top:70%; left:40%; --size:.80;  z-index:1; }
+  .pmenu-item:nth-child(1){ top:0%;  left:0%;  --size:1.16; z-index:6; }
+  .pmenu-item:nth-child(2){ top:15%; left:8%;  --size:1.04; z-index:5; }
+  .pmenu-item:nth-child(3){ top:30%; left:16%; --size:.94;  z-index:4; }
+  .pmenu-item:nth-child(4){ top:45%; left:24%; --size:.85;  z-index:3; }
+  .pmenu-item:nth-child(5){ top:59%; left:32%; --size:.78;  z-index:2; }
+  .pmenu-item:nth-child(6){ top:73%; left:40%; --size:.72;  z-index:1; }
 }
 
-/* ---------- móvil: lista vertical ---------- */
-@media (max-width:760px){
-  .pmenu-items{ display:flex; flex-direction:column; gap:18px; height:auto; max-height:74vh;
-    overflow-y:auto; width:min(420px,88vw); margin:0 auto; }
-  .pmenu-text{ font-size:2.6rem; -webkit-text-stroke-width:2px; }
-  .pmenu-bgtext{ font-size:clamp(56px,26vw,160px); max-width:88vw; }
-  .pmenu-hud-status{ display:none; }
-  .pmenu-info{ position:static; transform:none; max-width:none; text-align:center;
-    order:-1; margin-bottom:14px; display:none; }
-  .pmenu-ribbon{ top:14px; left:-70px; width:240px; font-size:11px; letter-spacing:4px; }
-  .pmenu-close{ top:12px; right:12px; padding:8px 12px; font-size:10px; }
+/* ---------- tablet: la ficha se va arriba y la lista se centra ---------- */
+@media (max-width:900px){
+  .pmenu{ display:block; overflow-y:auto; }
+  .pmenu-slab{ top:-2%; right:-6%; width:78%; height:104%; }
+  .pmenu-items{
+    display:flex; flex-direction:column; gap:16px;
+    width:min(560px,86vw); height:auto; margin:120px auto 60px;
+  }
+  .pmenu-item{ position:relative; }
+  .pmenu-text{ font-size:3rem; -webkit-text-stroke-width:2px; }
+  .pmenu-layer-1{ inset:-10px -22px; } .pmenu-layer-2{ inset:-6px -16px; }
+  .pmenu-bgtext{ font-size:clamp(64px,22vw,220px); max-width:88vw; }
+  .pmenu-info{
+    position:relative; left:auto; top:auto; transform:none;
+    max-width:none; width:min(560px,86vw); margin:96px auto 0;
+  }
+  .pmenu-info .big{ font-size:32px; }
+  .pmenu-ribbon{ top:16px; left:-70px; width:250px; font-size:12px; letter-spacing:4px; }
+}
+
+/* ---------- móvil ---------- */
+@media (max-width:560px){
+  .pmenu-items{ width:88vw; gap:12px; margin:96px auto 48px; }
+  .pmenu-text{ font-size:2.2rem; letter-spacing:-1px; }
+  .pmenu-subtext{ font-size:.62rem; padding:3px 8px; }
+  .pmenu-item:hover .pmenu-subtext, .pmenu-item:focus-visible .pmenu-subtext{ transform:none; }
+  /* En columna la etiqueta se pega debajo de su palabra, no al borde */
+  .pmenu-item.internal .pmenu-subtext{
+    position:static; align-self:flex-start; margin-top:8px; bottom:auto; right:auto;
+  }
+  .pmenu-item:hover, .pmenu-item:focus-visible{ transform:scale(1.02); }
+  .pmenu-info{ width:88vw; margin:84px auto 0; padding:13px 15px 15px; }
+  .pmenu-info .big{ font-size:26px; }
+  .pmenu-slab{ width:100%; right:-10%; }
+  .pmenu-ribbon{ top:12px; left:-80px; width:220px; font-size:10px; letter-spacing:3px; }
+  .pmenu-close{ top:10px; right:10px; padding:8px 11px; font-size:10px; }
+  .pmenu-bgtext{ font-size:clamp(56px,26vw,150px); }
 }
 
 @media (prefers-reduced-motion:reduce){
