@@ -97,12 +97,6 @@
   letter-spacing:-.05em; transform:skewX(-10deg);
 }
 
-/* ---------- palabra manuscrita de acento ---------- */
-.y2k-script{
-  font-family:var(--script-font); color:var(--crimson-hi);
-  line-height:.8; pointer-events:none;
-}
-
 /* ---------- texto japonés ---------- */
 .y2k-jp{
   font-family:var(--jp-font); font-weight:700; letter-spacing:2px;

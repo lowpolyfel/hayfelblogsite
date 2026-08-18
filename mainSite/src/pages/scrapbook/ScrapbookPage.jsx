@@ -4,13 +4,13 @@ import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
 import { Starfield } from '../../shared/assets/patterns/Starfield'
 import { Reveal } from '../../shared/ui/Reveal'
 import { BootScreen } from '../../shared/ui/BootScreen'
-import { TornFilters, TornPaper } from '../../shared/ui/TornPaper'
-import { Blob, Globe3D, Y2kCorners, Y2kDivider } from '../../shared/ui/Y2kBits'
+import { TornPaper } from '../../shared/ui/TornPaper'
+import { Globe3D, Y2kCorners, Y2kDivider } from '../../shared/ui/Y2kBits'
 import { confetti } from '../../shared/lib/confetti'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
   badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots, initialGuests,
-  jpLines, navLinks, notice, posts, socialLinks, statement, tags, tapeLines,
+  jpLines, navLinks, notice, posts, socialLinks, statement, tags,
 } from './data/content'
 import './scrapbook.css'
 
@@ -48,7 +48,6 @@ export function ScrapbookPage() {
 
   return (
     <div className="scb">
-      <TornFilters />
       <BootScreen lines={bootLines} onDone={bootDone} />
 
       <Starfield className="scb-bg" variant={bg.variant} red={bg.red} paused={navOpen || booting} />
@@ -75,15 +74,10 @@ export function ScrapbookPage() {
           {/* Capa lista para una foto: basta definir --hero-photo sobre .scb */}
           <div className="scb-herophoto" aria-hidden="true" />
 
-          <Globe3D className="scb-globe g1" rings={4} duration={14} />
-          <Globe3D className="scb-globe g2" rings={6} duration={22} reverse />
-          <Blob className="scb-blob" />
-
           <div className="scb-heroinner">
             <span className="scb-kicker">00 — INICIO</span>
             {/* El relleno del texto sale de --hero-word-img (imagen a futuro) */}
             <h1 className="scb-title">HAYFEL</h1>
-            <span className="y2k-script scb-scriptword">personal</span>
             <p className="scb-tagline">blog personal · escrito a mano · sin editar</p>
             <div className="scb-herochips">
               {badges.slice(0, 3).map((b) => <span key={b}>{b}</span>)}
@@ -98,8 +92,8 @@ export function ScrapbookPage() {
 
       {/* ---------- CINTAS INCLINADAS tipo "no pase" ---------- */}
       <div className="scb-tapezone" aria-hidden="true">
-        <div className="scb-tape t1"><span>{tapeLines[0].repeat(4)}</span></div>
-        <div className="scb-tape t2"><span>{tapeLines[1].repeat(4)}</span></div>
+        <div className="scb-tape t1" />
+        <div className="scb-tape t2" />
       </div>
 
       {/* ---------- STATEMENT ---------- */}
@@ -121,7 +115,6 @@ export function ScrapbookPage() {
               <PixelSprite accent="#c8102e" eye="#ffffff" />
               <span className="y2k-tint" aria-hidden="true" />
             </div>
-            <span className="y2k-script scb-photoscript">beauty</span>
           </div>
           <div className="scb-about-copy">
             <span className="scb-kicker">02 — SOBRE MI</span>
@@ -234,19 +227,13 @@ export function ScrapbookPage() {
           <div><span className="scb-kicker">06 — GALERÍA</span><h3>PEDAZOS SUELTOS</h3></div>
           <span className="scb-sectionnote">recortes sin orden</span>
         </Reveal>
-        <Reveal as="div" variant="up" className="scb-gallerywrap y2k-frame dark">
-          <Y2kCorners />
-          <div className="y2k-inner flush">
-            <div className="scb-gallerygrid">
-              {gallery.map((t, i) => (
-                <Reveal as="div" key={i} variant="scale" delay={i * 60} className={`tile tone-${t.tone}`}>
-                  <Icon name={t.icon} size={20} />
-                </Reveal>
-              ))}
-            </div>
-          </div>
-          <span className="y2k-script scb-galleryscript">recortes</span>
-        </Reveal>
+        <div className="scb-gallerygrid">
+          {gallery.map((t, i) => (
+            <Reveal as="div" key={i} variant="scale" delay={i * 60} className={`tile tone-${t.tone}`}>
+              <Icon name={t.icon} size={20} />
+            </Reveal>
+          ))}
+        </div>
       </section>
 
       {/* ---------- SÍGUEME ---------- */}
@@ -272,7 +259,7 @@ export function ScrapbookPage() {
 
       {/* ---------- FOOTER ---------- */}
       <footer className="scb-footer">
-        <div className="scb-footerword y2k-3d">{footerWord}</div>
+        <div className="scb-footerword">{footerWord}</div>
         <div className="scb-footmeta">
           <span>© 2026</span>
           <button onClick={bumpVisits}>{String(visits).padStart(6, '0')} VISITAS</button>

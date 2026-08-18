@@ -17,6 +17,8 @@ export const navLinks = [
   { key: 'extras', href: null },
   { key: 'faq', href: null },
   { key: 'links', href: null },
+  // Interno: navega dentro del mismo sitio (#redes), no abre pestaña nueva
+  { key: 'redes', href: '#redes', internal: true },
 ]
 
 export const posts = [
