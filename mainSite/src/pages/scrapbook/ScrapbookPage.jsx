@@ -5,11 +5,12 @@ import { Starfield } from '../../shared/assets/patterns/Starfield'
 import { Reveal } from '../../shared/ui/Reveal'
 import { BootScreen } from '../../shared/ui/BootScreen'
 import { TornFilters, TornPaper } from '../../shared/ui/TornPaper'
+import { Blob, Globe3D, Y2kCorners, Y2kDivider } from '../../shared/ui/Y2kBits'
 import { confetti } from '../../shared/lib/confetti'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
   badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots, initialGuests,
-  navLinks, notice, posts, socialLinks, statement, tags, tapeLines,
+  jpLines, navLinks, notice, posts, socialLinks, statement, tags, tapeLines,
 } from './data/content'
 import './scrapbook.css'
 
@@ -19,10 +20,8 @@ const BG_PRESETS = [
   { variant: 2, red: '#c89010', label: 'dorado · galaxia' },
 ]
 
-// Un corte de papel distinto por tarjeta, para que ninguna se repita.
-const POST_CUTS = [
-  { base: 'crimson' }, { base: 'ink' }, { base: 'crimson-hi' }, { base: 'ink' },
-]
+// Los marcos de las entradas alternan claro y oscuro
+const CARD_TONES = ['', 'dark', '', 'dark']
 
 export function ScrapbookPage() {
   const [booting, setBooting] = useState(true)
@@ -61,7 +60,7 @@ export function ScrapbookPage() {
       {/* Barra fija: acompaña el scroll de punta a punta */}
       <header className="scb-nav">
         <span className="scb-logo">HAYFEL</span>
-        <span className="scb-navmeta">BLOG PERSONAL — SIN ALGORITMO</span>
+        <span className="scb-navmeta y2k-jp">{jpLines[2]}</span>
         <button className="scb-hamburger" aria-label={navOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={navOpen}
           onClick={() => setNavOpen((v) => !v)}>
           <Icon name={navOpen ? 'close' : 'menu'} size={18} />
@@ -69,21 +68,29 @@ export function ScrapbookPage() {
         </button>
       </header>
 
-      {/* ---------- HERO: panel roto + título con relleno de imagen ---------- */}
+      {/* ---------- HERO ---------- */}
       <section className="scb-hero">
         <Reveal as="div" variant="scale" className="scb-heropanel torn-host">
           <TornPaper cut="both" base="crimson" top="ink2" />
           {/* Capa lista para una foto: basta definir --hero-photo sobre .scb */}
           <div className="scb-herophoto" aria-hidden="true" />
+
+          <Globe3D className="scb-globe g1" rings={4} duration={14} />
+          <Globe3D className="scb-globe g2" rings={6} duration={22} reverse />
+          <Blob className="scb-blob" />
+
           <div className="scb-heroinner">
             <span className="scb-kicker">00 — INICIO</span>
             {/* El relleno del texto sale de --hero-word-img (imagen a futuro) */}
             <h1 className="scb-title">HAYFEL</h1>
+            <span className="y2k-script scb-scriptword">personal</span>
             <p className="scb-tagline">blog personal · escrito a mano · sin editar</p>
             <div className="scb-herochips">
               {badges.slice(0, 3).map((b) => <span key={b}>{b}</span>)}
             </div>
+            <p className="y2k-jp scb-herojp">{jpLines[0]}</p>
           </div>
+
           <span className="scb-pin p1" aria-hidden="true" />
           <span className="scb-pin p2" aria-hidden="true" />
         </Reveal>
@@ -101,16 +108,20 @@ export function ScrapbookPage() {
         <span className="scb-sticker star" aria-hidden="true" />
         <span className="scb-kicker on-crimson">01 — MANIFIESTO</span>
         <h2>{statement}</h2>
-        <span className="scb-sticker boom" aria-hidden="true">¡!</span>
+        <span className="scb-sticker boom" aria-hidden="true">✚</span>
       </Reveal>
 
       {/* ---------- SOBRE MI ---------- */}
       <section className="scb-aboutwrap torn-host">
         <TornPaper cut="top" base="crimson" top="ink2" />
         <Reveal as="div" variant="left" className="scb-about">
-          <div className="scb-about-photo torn-host">
-            <TornPaper cut="all" base="crimson" top="ink" hard sm />
-            <PixelSprite accent="#c8102e" eye="#ffffff" />
+          <div className="scb-about-photo y2k-frame dark">
+            <Y2kCorners />
+            <div className="y2k-inner flush">
+              <PixelSprite accent="#c8102e" eye="#ffffff" />
+              <span className="y2k-tint" aria-hidden="true" />
+            </div>
+            <span className="y2k-script scb-photoscript">beauty</span>
           </div>
           <div className="scb-about-copy">
             <span className="scb-kicker">02 — SOBRE MI</span>
@@ -120,9 +131,10 @@ export function ScrapbookPage() {
             <div className="scb-tags">{tags.map((t) => <span key={t}>{t}</span>)}</div>
           </div>
         </Reveal>
+        <Y2kDivider jp={jpLines[1]} />
       </section>
 
-      {/* ---------- ENTRADAS RECIENTES ---------- */}
+      {/* ---------- ENTRADAS RECIENTES (marcos Y2K, no papel roto) ---------- */}
       <section className="scb-posts torn-host" id="posts">
         <TornPaper cut="both" base="crimson" top="paper" />
         <Reveal as="div" variant="up" className="scb-sectionhead">
@@ -131,18 +143,23 @@ export function ScrapbookPage() {
         </Reveal>
         <div className="scb-postgrid">
           {posts.map((p, i) => (
-            <Reveal as="article" key={p.title} variant="up" delay={i * 90} className={`scb-postcard torn-host rot-${i % 4}`}>
-              <TornPaper cut="all" base={POST_CUTS[i % 4].base} top="white" hard sm />
-              <span className="cat">{p.category}</span>
-              <h4>{p.title}</h4>
-              <span className="date">{p.date}</span>
-              <span className="go">LEER →</span>
+            <Reveal as="article" key={p.title} variant="up" delay={i * 90}
+              className={`scb-postcard y2k-frame ${CARD_TONES[i % 4]} rot-${i % 4}`}>
+              <Y2kCorners />
+              <div className="y2k-inner">
+                <span className="cat">{p.category}</span>
+                <h4>{p.title}</h4>
+                <span className="date">{p.date}</span>
+                <span className="go">LEER →</span>
+              </div>
             </Reveal>
           ))}
         </div>
+        <Y2kDivider jp={jpLines[0]} flip />
+        <Reveal as="p" variant="up" className="y2k-pill">{notice}</Reveal>
       </section>
 
-      {/* ---------- VITRINA DE CRISTAL (huecos listos para imágenes) ---------- */}
+      {/* ---------- VITRINA DE CRISTAL ---------- */}
       <section className="scb-glass">
         <Reveal as="div" variant="up" className="scb-glasspanel">
           <div className="scb-glassrail">
@@ -165,6 +182,7 @@ export function ScrapbookPage() {
                 <Reveal as="figure" key={s.id} variant="scale" delay={i * 80}
                   className={`scb-slot ${s.span ? `slot-${s.span}` : ''}`}
                   style={{ '--img': `var(--slot-${s.id}, none)` }}>
+                  <span className="y2k-tint" aria-hidden="true" />
                   <span className="scb-slotlabel">{s.label}</span>
                   <span className="scb-slotplus" aria-hidden="true">+</span>
                 </Reveal>
@@ -197,29 +215,38 @@ export function ScrapbookPage() {
             </Reveal>
           ))}
         </div>
-        <Reveal as="div" variant="up" className="scb-signcard torn-host">
-          <TornPaper cut="all" base="crimson" top="paper" hard sm />
-          <input value={gname} onChange={(e) => setGname(e.target.value)} placeholder="tu nombre" maxLength={18} aria-label="Tu nombre" />
-          <input value={gmsg} onChange={(e) => setGmsg(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sign()}
-            placeholder="deja tu historia..." maxLength={140} aria-label="Tu mensaje" />
-          <button onClick={sign}><Icon name="send" size={13} /> FIRMAR</button>
+        <Reveal as="div" variant="up" className="scb-signcard y2k-frame">
+          <Y2kCorners />
+          <div className="y2k-inner flush scb-signgrid">
+            <input value={gname} onChange={(e) => setGname(e.target.value)} placeholder="tu nombre" maxLength={18} aria-label="Tu nombre" />
+            <input value={gmsg} onChange={(e) => setGmsg(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sign()}
+              placeholder="deja tu historia..." maxLength={140} aria-label="Tu mensaje" />
+            <button onClick={sign}><Icon name="send" size={13} /> FIRMAR</button>
+          </div>
         </Reveal>
       </section>
 
       {/* ---------- GALERÍA ---------- */}
       <section className="scb-gallery torn-host">
         <TornPaper cut="top" base="crimson" top="ink" />
+        <Globe3D className="scb-globe g3" rings={5} duration={26} reverse />
         <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
           <div><span className="scb-kicker">06 — GALERÍA</span><h3>PEDAZOS SUELTOS</h3></div>
           <span className="scb-sectionnote">recortes sin orden</span>
         </Reveal>
-        <div className="scb-gallerygrid">
-          {gallery.map((t, i) => (
-            <Reveal as="div" key={i} variant="scale" delay={i * 60} className={`tile tone-${t.tone}`}>
-              <Icon name={t.icon} size={20} />
-            </Reveal>
-          ))}
-        </div>
+        <Reveal as="div" variant="up" className="scb-gallerywrap y2k-frame dark">
+          <Y2kCorners />
+          <div className="y2k-inner flush">
+            <div className="scb-gallerygrid">
+              {gallery.map((t, i) => (
+                <Reveal as="div" key={i} variant="scale" delay={i * 60} className={`tile tone-${t.tone}`}>
+                  <Icon name={t.icon} size={20} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+          <span className="y2k-script scb-galleryscript">recortes</span>
+        </Reveal>
       </section>
 
       {/* ---------- SÍGUEME ---------- */}
@@ -227,7 +254,7 @@ export function ScrapbookPage() {
         <TornPaper cut="both" base="paper" top="ink2" />
         <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
           <div><span className="scb-kicker">07 — REDES</span><h3>SÍGUEME</h3></div>
-          <span className="scb-sectionnote">{notice}</span>
+          <span className="scb-sectionnote">todavía sin enlazar, pero ahí van</span>
         </Reveal>
         <div className="scb-sociallist">
           {socialLinks.map((s, i) => {
@@ -245,7 +272,7 @@ export function ScrapbookPage() {
 
       {/* ---------- FOOTER ---------- */}
       <footer className="scb-footer">
-        <div className="scb-footerword">{footerWord}</div>
+        <div className="scb-footerword y2k-3d">{footerWord}</div>
         <div className="scb-footmeta">
           <span>© 2026</span>
           <button onClick={bumpVisits}>{String(visits).padStart(6, '0')} VISITAS</button>
