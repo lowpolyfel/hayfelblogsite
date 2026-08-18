@@ -2,8 +2,9 @@
   --crimson:#c8102e; --crimson-2:#8c0b21; --crimson-hi:#ff2d4d; --crimson-glow:#ff5470;
   --ink:#1a1a1a; --ink-2:#242424; --ink-3:#2f2f2f;
   --paper:#f3f0e6; --paper-dim:#c9c4b4;
-  --body-font:'Nunito',ui-sans-serif,system-ui,sans-serif;
-  --display-font:'Baloo 2','Fredoka',ui-rounded,sans-serif;
+  --body-font:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
+  --display-font:'Archivo Black',Impact,'Arial Black',sans-serif;
+  --mono-font:'Space Mono',ui-monospace,'Courier New',monospace;
 
   position:relative; min-height:100vh; overflow-x:clip;
   font-family:var(--body-font); font-size:14px; color:var(--paper);

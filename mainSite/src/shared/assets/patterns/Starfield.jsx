@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 // chicas) dibujadas con contornos concéntricos alternando blanco/negro sobre
 // la estrella base, en una de tres variantes de movimiento (deriva lenta,
 // lluvia, galaxia) — `variant` la fija desde afuera; sin ella se elige al
-// azar. Se reordena con click/tap sobre el propio fondo, o barra espaciadora.
+// azar. Se reordena solo con teclado (espacio/enter/R), nunca con click.
 // `paused` detiene el dibujo (p.ej. mientras un overlay opaco lo tapa) sin
 // perder el estado del campo. ~30fps, no 60: es un fondo, no un juego.
 // Respeta prefers-reduced-motion (dibuja un solo cuadro fijo).
@@ -225,9 +225,9 @@ export function Starfield({ className, variant, paused = false, red = '#c8102e',
     function onVisibility() { if (document.hidden) corriendo = false; else arrancar() }
 
     window.addEventListener('resize', onResize)
-    // Solo reordena si el click es sobre el propio fondo (el canvas está
-    // detrás de todo lo demás), no en cualquier botón/link del sitio.
-    cv.addEventListener('pointerdown', rebarajar)
+    // El click sobre el fondo NO reordena: interrumpía la animación cada vez
+    // que se picaba en cualquier parte vacía de la página. Queda solo el
+    // atajo de teclado para quien lo quiera a propósito.
     document.addEventListener('keydown', onKeydown)
     document.addEventListener('visibilitychange', onVisibility)
 
@@ -239,7 +239,6 @@ export function Starfield({ className, variant, paused = false, red = '#c8102e',
       cancelAnimationFrame(rafId)
       clearTimeout(resizeTimer)
       window.removeEventListener('resize', onResize)
-      cv.removeEventListener('pointerdown', rebarajar)
       document.removeEventListener('keydown', onKeydown)
       document.removeEventListener('visibilitychange', onVisibility)
     }
