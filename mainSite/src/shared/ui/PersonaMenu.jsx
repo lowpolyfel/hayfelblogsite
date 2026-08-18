@@ -150,9 +150,15 @@ export function PersonaMenu({ open, onClose, items, visits }) {
         <Icon name="close" size={16} /> ESC
       </button>
 
-      <div className="pmenu-hud-visits">
-        <span className="cur">¤</span> {String(visits).padStart(6, '0')}
+      {/* Ficha lateral tipo pantalla de pausa: el ítem enfocado se lee aquí */}
+      <div className="pmenu-info">
+        <span className="eyebrow">HAYFEL</span>
+        <span className="sub">navegación</span>
+        <span className="big">{activeItem?.key?.toUpperCase()}</span>
+        <span className="foot">{activeItem?.href ? 'ABRE EN PESTAÑA NUEVA' : 'PRÓXIMAMENTE'}</span>
+        <span className="count">¤ {String(visits).padStart(6, '0')} VISITAS</span>
       </div>
+
       <div className="pmenu-hud-status">
         <div className="dot" /><div className="line" /><div className="text">STATUS: ONLINE</div>
       </div>
