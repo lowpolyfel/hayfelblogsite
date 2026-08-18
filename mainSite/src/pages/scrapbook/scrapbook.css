@@ -12,6 +12,9 @@
   --body-font:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
   --display-font:'Archivo Black',Impact,'Arial Black',sans-serif;
   --mono-font:'Space Mono',ui-monospace,'Courier New',monospace;
+  --y2k-font:'Righteous',ui-rounded,'Arial Black',sans-serif;
+  --script-font:'Mr Dafoe',cursive;
+  --jp-font:'Noto Sans JP',ui-sans-serif,sans-serif;
   --edge:4px solid var(--ink);
   --hard:10px 10px 0 var(--ink);
 
@@ -136,7 +139,7 @@
 /* ---------- SOBRE MI ---------- */
 .scb-aboutwrap{ z-index:2; padding:80px 20px; }
 .scb-about{ max-width:1080px; margin:0 auto; display:grid; grid-template-columns:240px minmax(0,1fr); gap:40px; align-items:start; }
-.scb-about-photo{ padding:20px; }
+.scb-about-photo{ position:relative; }
 .scb-about-photo svg{ width:100%; height:auto; image-rendering:pixelated; }
 .scb-about-copy h3{ margin:0 0 16px; font-family:var(--display-font); font-size:clamp(30px,4.4vw,52px); color:#fff; letter-spacing:-1px; }
 .scb-about-copy p{ margin:0 0 12px; line-height:1.65; color:var(--paper-dim); font-size:14px; max-width:58ch; }
@@ -162,16 +165,20 @@
 .scb-posts{ z-index:2; color:var(--ink); padding:82px 20px 96px; }
 .scb-postgrid{ max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:26px; }
 .scb-postcard{
-  color:var(--ink); padding:24px 22px 48px; min-height:170px; cursor:default;
-  transition:transform .18s ease;
+  color:var(--ink); min-height:180px; cursor:default; transition:transform .18s ease;
 }
 .scb-postcard:hover{ transform:translate(-4px,-5px) rotate(0deg) !important; }
 .scb-postcard .cat{ display:inline-block; font-family:var(--mono-font); font-size:9px; font-weight:700;
   letter-spacing:1.5px; padding:4px 8px; background:var(--crimson); color:#fff; }
 .scb-postcard h4{ margin:12px 0 6px; font-family:var(--display-font); font-size:17px; line-height:1.2; letter-spacing:-.4px; }
 .scb-postcard .date{ font-family:var(--mono-font); font-size:11px; color:var(--ink-3); }
-.scb-postcard .go{ position:absolute; bottom:16px; left:18px; font-family:var(--mono-font);
+.scb-postcard .go{ position:absolute; bottom:14px; left:16px; font-family:var(--mono-font);
   font-size:11px; font-weight:700; letter-spacing:1px; color:var(--crimson); }
+/* variante de marco oscuro */
+.scb-postcard.dark{ color:var(--paper); }
+.scb-postcard.dark .date{ color:var(--paper-dim); }
+.scb-postcard.dark .go{ color:var(--crimson-hi); }
+.scb-postcard.dark .cat{ background:var(--crimson-hi); color:var(--ink); }
 
 /* ---------- VITRINA DE CRISTAL (blur / glassmorphism) ---------- */
 .scb-glass{ position:relative; z-index:2; padding:90px 20px; }
@@ -204,11 +211,20 @@
 .scb-slots{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-rows:132px; gap:14px; }
 .scb-slot{
   position:relative; margin:0; border-radius:18px; overflow:hidden;
-  background-image:var(--img,none); background-size:cover; background-position:center;
   background-color:rgba(15,15,15,.5);
   border:2px dashed rgba(255,255,255,.55);
-  display:grid; place-items:center;
+  display:grid; place-items:center; isolation:isolate;
 }
+/* Tratamiento Y2K: la foto se pasa a blanco y negro con mucho contraste en
+   ::before, y encima la capa .y2k-tint la tiñe en modo screen. Van separadas
+   porque si compartieran elemento el filtro también apagaría el teñido. */
+.scb-slot::before{
+  content:''; position:absolute; inset:0; z-index:0;
+  background-image:var(--img,none); background-size:cover; background-position:center;
+  filter:grayscale(100%) contrast(130%) brightness(110%);
+}
+.scb-slot > .scb-slotlabel, .scb-slot > .scb-slotplus{ position:relative; z-index:2; }
+.scb-slot > .scb-slotplus{ position:absolute; }
 .slot-tall{ grid-row:span 2; } .slot-wide{ grid-column:span 2; } .slot-wide3{ grid-column:span 3; }
 .scb-slotlabel{ font-family:var(--mono-font); font-size:11px; letter-spacing:2px; color:rgba(255,255,255,.85); }
 .scb-slotplus{
@@ -239,9 +255,9 @@
 .scb-story b{ display:block; font-family:var(--mono-font); font-size:12px; letter-spacing:1px; color:var(--crimson-hi); margin-bottom:4px; }
 .scb-story p{ margin:0; font-size:13px; color:var(--paper-dim); line-height:1.55; }
 .scb-signcard{
-  max-width:780px; margin:32px auto 0; color:var(--ink); padding:26px;
-  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:10px;
+  max-width:780px; margin:36px auto 0; color:var(--ink);
 }
+.scb-signgrid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:10px; }
 .scb-signcard input{ font-family:var(--body-font); font-size:13px; padding:11px 12px; border:3px solid var(--ink); min-width:0; }
 .scb-signcard button{
   display:flex; align-items:center; gap:7px; font-family:var(--mono-font); font-weight:700; font-size:12px;
@@ -251,7 +267,8 @@
 
 /* ---------- GALERÍA ---------- */
 .scb-gallery{ z-index:2; padding:80px 20px; }
-.scb-gallerygrid{ max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:16px; }
+.scb-gallerywrap{ position:relative; max-width:1080px; margin:0 auto; }
+.scb-gallerygrid{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:16px; }
 .scb-gallerygrid .tile{ aspect-ratio:1; display:grid; place-items:center; border:3px solid var(--ink-3); }
 .tile.tone-crimson{ background:var(--crimson); color:#fff; }
 .tile.tone-paper{ background:var(--paper); color:var(--ink); }
@@ -273,13 +290,28 @@
 
 /* ---------- FOOTER ---------- */
 .scb-footer{ position:relative; z-index:2; background:var(--ink); border-top:5px solid var(--crimson); padding:36px 20px 30px; text-align:center; }
-.scb-footerword{ font-family:var(--display-font); font-size:clamp(48px,16vw,180px); line-height:.85; color:#fff; letter-spacing:-4px; }
+.scb-footerword{ font-size:clamp(48px,14vw,160px); margin-bottom:16px; }
 .scb-footmeta{ margin-top:18px; display:flex; flex-wrap:wrap; gap:18px; justify-content:center; align-items:center;
   font-family:var(--mono-font); font-size:11px; letter-spacing:1px; color:var(--paper-dim); }
 .scb-footmeta button{ all:unset; cursor:pointer; color:var(--crimson-hi); }
 .scb-footmeta button:hover{ color:#fff; }
 .scb-footmeta a{ color:var(--paper-dim); text-decoration:underline; text-underline-offset:3px; }
 .scb-footmeta a:hover{ color:var(--crimson-hi); }
+
+/* ---------- colocación de las piezas Y2K ---------- */
+.scb-globe{ opacity:.55; }
+.scb-globe.g1{ top:-40px; left:-40px; width:190px; height:190px; }
+.scb-globe.g2{ bottom:-110px; right:-70px; width:360px; height:360px; opacity:.4; }
+.scb-globe.g3{ top:30px; right:-60px; width:210px; height:210px; opacity:.35; }
+.scb-blob{ top:11%; right:-34px; width:130px; height:160px; fill:var(--crimson-2); opacity:.9; }
+
+.scb-scriptword{
+  position:absolute; top:36%; left:4%; font-size:clamp(40px,6.5vw,92px);
+  transform:rotate(-15deg); z-index:3;
+}
+.scb-herojp{ margin:22px 0 0; }
+.scb-photoscript{ position:absolute; bottom:-30px; left:-26px; font-size:66px; z-index:6; transform:rotate(-12deg); }
+.scb-galleryscript{ position:absolute; bottom:-26px; right:16px; font-size:70px; z-index:5; transform:rotate(-8deg); }
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width:900px){
@@ -300,7 +332,7 @@
   .scb-title{ -webkit-text-stroke-width:2px; }
   .scb-postgrid{ grid-template-columns:minmax(0,1fr); }
   .scb-gallerygrid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .scb-signcard{ grid-template-columns:minmax(0,1fr); }
+  .scb-signgrid{ grid-template-columns:minmax(0,1fr); }
   .scb-story, .scb-story:nth-child(even){ flex-direction:row; text-align:left; }
   .scb-statement{ padding:70px 18px; }
   .scb-sticker.boom{ font-size:36px; }
@@ -309,6 +341,11 @@
   .scb-slots{ grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:112px; }
   .slot-tall{ grid-row:span 1; } .slot-wide, .slot-wide3{ grid-column:span 2; }
   .scb-glassword{ font-size:56px; right:10px; }
+  .scb-globe.g2, .scb-globe.g3, .scb-blob{ display:none; }
+  .scb-globe.g1{ width:120px; height:120px; top:-24px; left:-24px; }
+  .scb-scriptword{ font-size:44px; left:3%; top:58%; }
+  .scb-photoscript{ font-size:44px; bottom:-22px; left:-12px; }
+  .scb-galleryscript{ font-size:46px; bottom:-18px; }
 }
 @media (prefers-reduced-motion:reduce){
   .scb *,.scb *::before,.scb *::after{

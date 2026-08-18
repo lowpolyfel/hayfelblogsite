@@ -27,6 +27,13 @@ export const glassCopy = {
   meta: 'aquí van las imágenes que se quieran cargar después',
 }
 
+// Líneas decorativas en japonés (del póster). Son adorno, no información.
+export const jpLines = [
+  '何 も 作 成 さ れ な い の で 、 深 さ は 追 加 さ れ ず 、 変 換 さ れ ま す 。',
+  '個 人 的 な ブ ロ グ 、 ア ル ゴ リ ズ ム な し 。',
+  '手 書 き の ペ ー ジ',
+]
+
 export const gallery = [
   { icon: 'heart', tone: 'crimson' },
   { icon: 'sparkle', tone: 'paper' },
