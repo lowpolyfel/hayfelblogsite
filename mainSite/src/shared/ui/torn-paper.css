@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Papel rasgado en doble capa — el borde lo hace un filtro SVG de ruido,
+   no un clip-path. Los 20 cortes del prototipo, con la paleta del sitio.
+   ========================================================================== */
+
+.torn-defs{ position:absolute; width:0; height:0; overflow:hidden; }
+
+/* El contenedor: isolation crea contexto de apilado propio, así las capas
+   con z-index:-1 se quedan detrás del contenido pero dentro del elemento. */
+.torn-host{ position:relative; isolation:isolate; background:transparent; }
+
+.torn-layers{
+  position:absolute; inset:0; z-index:-1; pointer-events:none;
+  /* --out: los bordes que NO se rasgan salen fuera de cuadro y no se ven.
+     --eb/--et: cuánto sobresale la capa de base respecto de la de color;
+     esa diferencia es el filo de papel que queda asomando. */
+  --out:-24px; --eb:-6px; --et:7px;
+}
+/* Piezas sueltas (tarjetas, fotos): el filo se achica para que el papel de
+   una no se meta encima de la de al lado en la retícula. */
+.torn-sm{ --out:-10px; --eb:-2px; --et:9px; }
+.torn-base, .torn-top{ position:absolute; }
+
+.torn-base{ filter:url(#torn-base) drop-shadow(0 10px 10px rgba(0,0,0,.35)); }
+.torn-top{ filter:url(#torn-top) drop-shadow(0 4px 6px rgba(0,0,0,.4)); overflow:hidden; }
+.torn-aggr .torn-base{ filter:url(#torn-aggr-base) drop-shadow(0 15px 15px rgba(0,0,0,.4)); }
+.torn-aggr .torn-top{ filter:url(#torn-aggr-top) drop-shadow(0 8px 8px rgba(0,0,0,.5)); }
+/* Sombra dura desplazada: sigue la silueta rasgada, no un rectángulo. */
+.torn-hard .torn-base{ filter:url(#torn-base) drop-shadow(9px 10px 0 rgba(0,0,0,.5)); }
+.torn-hard .torn-top{ filter:url(#torn-top); }
+.torn-hard.torn-aggr .torn-base{ filter:url(#torn-aggr-base) drop-shadow(9px 10px 0 rgba(0,0,0,.5)); }
+.torn-hard.torn-aggr .torn-top{ filter:url(#torn-aggr-top); }
+
+/* Textura: fibra fina en la base, trama de puntos en el color */
+.torn-base::after{
+  content:''; position:absolute; inset:0; opacity:.8;
+  background-image:repeating-linear-gradient(to right,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);
+}
+.torn-top::after{
+  content:''; position:absolute; inset:0; opacity:.6; mix-blend-mode:overlay;
+  background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1px); background-size:8px 8px;
+}
+
+/* Colores de capa (paleta del sitio) */
+.tn-crimson{ background:var(--crimson); }
+.tn-crimson-hi{ background:var(--crimson-hi); }
+.tn-ink{ background:var(--ink); }
+.tn-ink2{ background:var(--ink-2); }
+.tn-paper{ background:var(--paper); }
+.tn-white{ background:#fff; }
+
+/* ---------- los 20 cortes ---------- */
+
+/* 01 arriba y abajo */
+.cut-both .torn-base{ left:var(--out); right:var(--out); top:var(--eb); bottom:var(--eb); }
+.cut-both .torn-top { left:var(--out); right:var(--out); top:var(--et); bottom:var(--et); }
+/* 02 solo arriba */
+.cut-top .torn-base{ left:var(--out); right:var(--out); bottom:var(--out); top:var(--eb); }
+.cut-top .torn-top { left:var(--out); right:var(--out); bottom:var(--out); top:var(--et); }
+/* 03 solo abajo */
+.cut-bottom .torn-base{ left:var(--out); right:var(--out); top:var(--out); bottom:var(--eb); }
+.cut-bottom .torn-top { left:var(--out); right:var(--out); top:var(--out); bottom:var(--et); }
+/* 04 solo izquierda */
+.cut-left .torn-base{ top:var(--out); bottom:var(--out); right:var(--out); left:var(--eb); }
+.cut-left .torn-top { top:var(--out); bottom:var(--out); right:var(--out); left:var(--et); }
+/* 05 solo derecha */
+.cut-right .torn-base{ top:var(--out); bottom:var(--out); left:var(--out); right:var(--eb); }
+.cut-right .torn-top { top:var(--out); bottom:var(--out); left:var(--out); right:var(--et); }
+/* 06 esquina superior izquierda */
+.cut-tl .torn-base{ right:var(--out); bottom:var(--out); top:var(--eb); left:var(--eb); }
+.cut-tl .torn-top { right:var(--out); bottom:var(--out); top:var(--et); left:var(--et); }
+/* 07 esquina superior derecha */
+.cut-tr .torn-base{ left:var(--out); bottom:var(--out); top:var(--eb); right:var(--eb); }
+.cut-tr .torn-top { left:var(--out); bottom:var(--out); top:var(--et); right:var(--et); }
+/* 08 esquina inferior izquierda */
+.cut-bl .torn-base{ right:var(--out); top:var(--out); bottom:var(--eb); left:var(--eb); }
+.cut-bl .torn-top { right:var(--out); top:var(--out); bottom:var(--et); left:var(--et); }
+/* 09 esquina inferior derecha */
+.cut-br .torn-base{ left:var(--out); top:var(--out); bottom:var(--eb); right:var(--eb); }
+.cut-br .torn-top { left:var(--out); top:var(--out); bottom:var(--et); right:var(--et); }
+/* 10 ambos lados (vertical) */
+.cut-sides .torn-base{ top:var(--out); bottom:var(--out); left:var(--eb); right:var(--eb); }
+.cut-sides .torn-top { top:var(--out); bottom:var(--out); left:var(--et); right:var(--et); }
+/* 11 los cuatro bordes (fragmento suelto) */
+.cut-all .torn-base{ inset:var(--eb); }
+.cut-all .torn-top { inset:var(--et); }
+/* 12 mitad superior */
+.cut-half-top .torn-base{ left:var(--out); right:var(--out); top:var(--out); bottom:45%; }
+.cut-half-top .torn-top { left:var(--out); right:var(--out); top:var(--out); bottom:50%; }
+/* 13 mitad izquierda */
+.cut-half-left .torn-base{ top:var(--out); bottom:var(--out); left:var(--out); right:45%; }
+.cut-half-left .torn-top { top:var(--out); bottom:var(--out); left:var(--out); right:50%; }
+/* 14 diagonal transversal */
+.cut-diag .torn-base{ top:50%; left:50%; width:150%; height:132px; transform:translate(-50%,-50%) rotate(-45deg); }
+.cut-diag .torn-top { top:50%; left:50%; width:150%; height:100px; transform:translate(-50%,-50%) rotate(-45deg); }
+/* 15 diagonal inversa */
+.cut-diag-inv .torn-base{ top:50%; left:50%; width:150%; height:132px; transform:translate(-50%,-50%) rotate(45deg); }
+.cut-diag-inv .torn-top { top:50%; left:50%; width:150%; height:100px; transform:translate(-50%,-50%) rotate(45deg); }
+/* 16 ángulo inclinado arriba */
+.cut-slant-top .torn-base{ width:150%; height:150%; top:40%; left:-20%; transform:rotate(12deg); }
+.cut-slant-top .torn-top { width:150%; height:150%; top:45%; left:-20%; transform:rotate(12deg); }
+/* 17 ángulo inclinado abajo */
+.cut-slant-bottom .torn-base{ width:150%; height:150%; bottom:40%; left:-20%; transform:rotate(-6deg); }
+.cut-slant-bottom .torn-top { width:150%; height:150%; bottom:45%; left:-20%; transform:rotate(-6deg); }
+/* 18 corte de esquina */
+.cut-corner-cut .torn-base{ width:200%; height:200%; top:-120%; left:20%; transform:rotate(45deg); }
+.cut-corner-cut .torn-top { width:200%; height:200%; top:-125%; left:25%; transform:rotate(45deg); }
+/* 19 rasgado violento (derecha) — pensado con aggressive */
+.cut-violent .torn-base{ top:-40px; bottom:-40px; left:-40px; right:6px; }
+.cut-violent .torn-top { top:-40px; bottom:-40px; left:-40px; right:14px; }
+/* 20 franja vertical centrada */
+.cut-stripe .torn-base{ top:var(--out); bottom:var(--out); left:25%; right:25%; }
+.cut-stripe .torn-top { top:var(--out); bottom:var(--out); left:30%; right:30%; }
+
+/* En pantallas chicas el filo se achica para que no se coma el contenido */
+@media (max-width:640px){
+  .torn-layers{ --eb:-4px; --et:5px; }
+}
