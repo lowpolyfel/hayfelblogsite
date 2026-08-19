@@ -30,7 +30,7 @@
    izquierdo, que lo rasga el mismo filtro de ruido del resto del sitio. */
 .pmenu-slab{
   position:absolute; top:-4%; right:-4%; width:56%; height:108%; z-index:2;
-  pointer-events:none;
+  pointer-events:none; transition:transform .35s ease-out;
 }
 .pmenu-slab-base, .pmenu-slab-top{
   position:absolute; top:0; bottom:0; right:0; display:block;
@@ -84,12 +84,14 @@
 .pmenu-items{
   position:relative; width:min(720px,78vw); height:min(620px,74vh);
   transform-style:preserve-3d; z-index:10; margin-left:auto; margin-right:5vw;
+  transition:transform .22s ease-out;
 }
 
+/* Zona sensible sólida: el ítem es una caja con relleno propio, así no hay
+   huecos entre letras donde el puntero "salga" sin querer. */
 .pmenu-item{
   position:relative; display:flex; flex-direction:column; text-decoration:none; cursor:pointer;
-  transform-style:preserve-3d; transition:transform .2s cubic-bezier(.175,.885,.32,1.275);
-  outline-offset:6px;
+  padding:14px 34px; outline-offset:6px;
   animation:pmSmash .4s cubic-bezier(.1,.9,.2,1) forwards; opacity:0;
 }
 .pmenu-item:nth-child(1){ animation-delay:0s; } .pmenu-item:nth-child(2){ animation-delay:.07s; }
@@ -100,48 +102,48 @@
   100%{ opacity:1; filter:blur(0); }
 }
 
-/* El "pedazo roto" del hover: ahora son dos capas de papel rasgado con el
-   mismo filtro de ruido del sitio, en vez de polígonos recortados. */
-.pmenu-layer-1, .pmenu-layer-2{
-  position:absolute; inset:-14px -38px; transform:scaleX(0);
-  transform-origin:left center; pointer-events:none;
+/* La tarjeta del hover: una sola pieza de papel roto por entrada, recortada
+   a su caja para que el corte elegido (arriba, esquina, todo...) se note.
+   Va con pointer-events:none, así que crecer no altera la zona sensible. */
+.pmenu-card{
+  position:absolute; inset:-4px -12px; z-index:1; overflow:hidden; pointer-events:none;
+  opacity:0; transform:scaleX(.22); transform-origin:left center;
+  transition:opacity .16s ease, transform .24s cubic-bezier(.1,.9,.2,1);
 }
-.pmenu-layer-1{ background:var(--paper); z-index:1; filter:url(#torn-base);
-  transition:transform .15s cubic-bezier(.1,.9,.2,1); }
-.pmenu-layer-2{ background:var(--ink); z-index:2; inset:-8px -30px; filter:url(#torn-top);
-  transition:transform .2s cubic-bezier(.1,.9,.2,1) .05s; }
 
 /* Hueco por defecto: solo contorno */
+/* Solo transicionan propiedades de pintado. Antes iba `transition:all`, que
+   incluía letter-spacing (y margin en cada letra): eso recalcula el layout de
+   la palabra entera en cada fotograma del hover. */
 .pmenu-text{
   position:relative; z-index:3; display:flex; line-height:.82; letter-spacing:-2px;
   font-size:calc(4rem * var(--size,1));
   color:transparent; -webkit-text-fill-color:transparent;
   -webkit-text-stroke:3px var(--paper);
-  transition:all .2s cubic-bezier(.175,.885,.32,1.275);
+  transition:-webkit-text-fill-color .18s ease, -webkit-text-stroke-color .18s ease;
 }
-.pmenu-text span{ display:inline-block; transition:transform .2s cubic-bezier(.175,.885,.32,1.275), margin .2s ease; }
+.pmenu-text span{ display:inline-block; transition:transform .2s cubic-bezier(.175,.885,.32,1.275); }
 
 .pmenu-subtext{
-  position:absolute; bottom:-8px; right:-8px; z-index:4;
+  position:absolute; bottom:-2px; right:6px; z-index:4;
   font-family:var(--mono-font); font-size:.72rem; letter-spacing:1px; font-weight:700;
   color:var(--paper); background:var(--ink); padding:4px 10px; border:2px solid var(--paper);
   opacity:0; pointer-events:none;
   transition:all .2s cubic-bezier(.175,.885,.32,1.275);
 }
 
-/* Activo: se llena de sólido y se adelanta */
-.pmenu-item:hover, .pmenu-item:focus-visible{ z-index:20; transform:scale(1.06) translateZ(70px); }
-.pmenu-item:hover .pmenu-layer-1, .pmenu-item:focus-visible .pmenu-layer-1{ transform:scaleX(1); }
-.pmenu-item:hover .pmenu-layer-2, .pmenu-item:focus-visible .pmenu-layer-2{ transform:scaleX(1); }
+/* Activo. El ítem NO se escala ni se adelanta: al hacerlo, su propia caja se
+   movía bajo el cursor y disparaba entrar/salir en bucle (sonido repetido y
+   animación reiniciándose). Solo cambian la tarjeta de atrás y el relleno
+   del texto, que no tocan la geometría. */
+.pmenu-item:hover, .pmenu-item:focus-visible{ z-index:20; }
+.pmenu-item:hover .pmenu-card, .pmenu-item:focus-visible .pmenu-card{ opacity:1; transform:scaleX(1); }
 .pmenu-item:hover .pmenu-text, .pmenu-item:focus-visible .pmenu-text{
-  color:var(--paper); -webkit-text-fill-color:var(--paper);
-  -webkit-text-stroke:3px var(--ink); letter-spacing:0;
+  -webkit-text-fill-color:var(--ink); -webkit-text-stroke-color:var(--crimson);
 }
-.pmenu-item:hover .pmenu-text span, .pmenu-item:focus-visible .pmenu-text span{ transform:none !important; margin:0 1px; }
-.pmenu-item:hover .pmenu-subtext, .pmenu-item:focus-visible .pmenu-subtext{ opacity:1; transform:translateX(20px); }
-.pmenu-item:active{ transform:scale(.96) translateZ(0); }
-.pmenu-item.flash .pmenu-layer-2{ background:var(--paper); }
-.pmenu-item.flash .pmenu-text{ color:var(--ink); -webkit-text-fill-color:var(--ink); -webkit-text-stroke:3px var(--paper); }
+.pmenu-item:hover .pmenu-text span, .pmenu-item:focus-visible .pmenu-text span{ transform:none !important; }
+.pmenu-item:hover .pmenu-subtext, .pmenu-item:focus-visible .pmenu-subtext{ opacity:1; }
+.pmenu-item.flash .pmenu-text{ -webkit-text-fill-color:var(--crimson); -webkit-text-stroke-color:var(--ink); }
 /* El que lleva a otra página se marca desde el principio */
 .pmenu-item.internal .pmenu-text{ -webkit-text-stroke-color:var(--crimson-hi); }
 .pmenu-item.internal .pmenu-subtext{ opacity:.9; background:var(--crimson); bottom:-24px; right:-2px; }
@@ -149,12 +151,12 @@
 /* cascada diagonal: cada ítem baja, se corre a la derecha y encoge */
 @media (min-width:901px){
   .pmenu-item{ position:absolute; }
-  .pmenu-item:nth-child(1){ top:0%;  left:0%;  --size:1.16; z-index:6; }
-  .pmenu-item:nth-child(2){ top:15%; left:8%;  --size:1.04; z-index:5; }
-  .pmenu-item:nth-child(3){ top:30%; left:16%; --size:.94;  z-index:4; }
-  .pmenu-item:nth-child(4){ top:45%; left:24%; --size:.85;  z-index:3; }
-  .pmenu-item:nth-child(5){ top:59%; left:32%; --size:.78;  z-index:2; }
-  .pmenu-item:nth-child(6){ top:73%; left:40%; --size:.72;  z-index:1; }
+  .pmenu-item:nth-child(1){ top:-2%; left:-4%; --size:1.16; z-index:6; }
+  .pmenu-item:nth-child(2){ top:13%; left:4%;  --size:1.04; z-index:5; }
+  .pmenu-item:nth-child(3){ top:28%; left:12%; --size:.94;  z-index:4; }
+  .pmenu-item:nth-child(4){ top:43%; left:20%; --size:.85;  z-index:3; }
+  .pmenu-item:nth-child(5){ top:57%; left:28%; --size:.78;  z-index:2; }
+  .pmenu-item:nth-child(6){ top:71%; left:36%; --size:.72;  z-index:1; }
 }
 
 /* ---------- tablet: la ficha se va arriba y la lista se centra ---------- */
@@ -167,7 +169,7 @@
   }
   .pmenu-item{ position:relative; }
   .pmenu-text{ font-size:3rem; -webkit-text-stroke-width:2px; }
-  .pmenu-layer-1{ inset:-10px -22px; } .pmenu-layer-2{ inset:-6px -16px; }
+  .pmenu-item{ padding:10px 18px; }
   .pmenu-bgtext{ font-size:clamp(64px,22vw,220px); max-width:88vw; }
   .pmenu-info{
     position:relative; left:auto; top:auto; transform:none;
