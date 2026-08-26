@@ -97,6 +97,7 @@
 .pmenu-item:nth-child(1){ animation-delay:0s; } .pmenu-item:nth-child(2){ animation-delay:.07s; }
 .pmenu-item:nth-child(3){ animation-delay:.14s; } .pmenu-item:nth-child(4){ animation-delay:.21s; }
 .pmenu-item:nth-child(5){ animation-delay:.28s; } .pmenu-item:nth-child(6){ animation-delay:.35s; }
+.pmenu-item:nth-child(7){ animation-delay:.42s; }
 @keyframes pmSmash{
   0%{ opacity:0; transform:scale(2) translateX(-70px); filter:blur(10px); }
   100%{ opacity:1; filter:blur(0); }
@@ -151,12 +152,13 @@
 /* cascada diagonal: cada ítem baja, se corre a la derecha y encoge */
 @media (min-width:901px){
   .pmenu-item{ position:absolute; }
-  .pmenu-item:nth-child(1){ top:-2%; left:-4%; --size:1.16; z-index:6; }
-  .pmenu-item:nth-child(2){ top:13%; left:4%;  --size:1.04; z-index:5; }
-  .pmenu-item:nth-child(3){ top:28%; left:12%; --size:.94;  z-index:4; }
-  .pmenu-item:nth-child(4){ top:43%; left:20%; --size:.85;  z-index:3; }
-  .pmenu-item:nth-child(5){ top:57%; left:28%; --size:.78;  z-index:2; }
-  .pmenu-item:nth-child(6){ top:71%; left:36%; --size:.72;  z-index:1; }
+  .pmenu-item:nth-child(1){ top:-3%; left:-4%; --size:1.10; z-index:7; }
+  .pmenu-item:nth-child(2){ top:10%; left:3%;  --size:1.00; z-index:6; }
+  .pmenu-item:nth-child(3){ top:23%; left:10%; --size:.92;  z-index:5; }
+  .pmenu-item:nth-child(4){ top:36%; left:17%; --size:.84;  z-index:4; }
+  .pmenu-item:nth-child(5){ top:49%; left:24%; --size:.77;  z-index:3; }
+  .pmenu-item:nth-child(6){ top:62%; left:31%; --size:.71;  z-index:2; }
+  .pmenu-item:nth-child(7){ top:75%; left:38%; --size:.66;  z-index:1; }
 }
 
 /* ---------- tablet: la ficha se va arriba y la lista se centra ---------- */

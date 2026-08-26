@@ -83,11 +83,17 @@
   font-size:clamp(74px,17vw,250px); color:#fff;
 }
 .scb-tagline{ margin:18px 0 0; font-family:var(--mono-font); font-size:13px; letter-spacing:2px; color:var(--paper); }
-.scb-herochips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:20px; }
-.scb-herochips span{
-  font-family:var(--mono-font); font-size:10px; font-weight:700; letter-spacing:1px;
-  padding:6px 10px; background:var(--crimson); color:#fff; border:2px solid var(--ink);
+/* Accesos directos a los otros sitios del web */
+.scb-herolinks{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:26px; }
+.scb-herolink{
+  display:flex; align-items:center; gap:10px; padding:13px 20px; text-decoration:none;
+  background:var(--crimson); color:#fff; border:3px solid var(--paper);
+  transition:transform .16s ease, background .16s ease;
 }
+.scb-herolink b{ font-family:var(--display-font); font-size:15px; letter-spacing:.5px; }
+.scb-herolink em{ font-family:var(--mono-font); font-style:normal; font-size:10px; letter-spacing:1px; opacity:.85; }
+.scb-herolink span{ font-family:var(--mono-font); font-size:14px; }
+.scb-herolink:hover{ background:var(--ink); border-color:var(--crimson-hi); transform:translate(-2px,-3px); }
 .scb-pin{ position:absolute; width:16px; height:16px; border-radius:50%; background:var(--crimson-hi);
   border:3px solid var(--ink); z-index:4; }
 .scb-pin.p1{ top:22px; left:6%; } .scb-pin.p2{ top:30px; right:7%; }
