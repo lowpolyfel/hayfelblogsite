@@ -27,11 +27,19 @@ export const glassCopy = {
   meta: 'aquí van las imágenes que se quieran cargar después',
 }
 
-// Líneas decorativas en japonés (del póster). Son adorno, no información.
+// Líneas en japonés en la línea de "CHASE!" de Setsuna Yuki: empezar ahora,
+// perseguir a quien quieres llegar a ser, avanzar un paso a la vez.
+// Son frases escritas para el sitio, no la letra de la canción.
 export const jpLines = [
-  '何 も 作 成 さ れ な い の で 、 深 さ は 追 加 さ れ ず 、 変 換 さ れ ま す 。',
-  '個 人 的 な ブ ロ グ 、 ア ル ゴ リ ズ ム な し 。',
-  '手 書 き の ペ ー ジ',
+  '走 り 出 せ 、 今 す ぐ に', // "echa a correr, ahora mismo"
+  'ま だ 見 ぬ 自 分 を 追 い か け て', // "persiguiendo al yo que aún no conozco"
+  '一 歩 ず つ 、 前 へ', // "un paso a la vez, hacia adelante"
+]
+
+// Accesos directos a los otros sitios, en la primera escena
+export const heroLinks = [
+  { label: 'REDES', href: '#redes', note: 'todos los enlaces' },
+  { label: 'CALENDARIO', href: '#calendario', note: 'qué viene ahora' },
 ]
 
 export const gallery = [

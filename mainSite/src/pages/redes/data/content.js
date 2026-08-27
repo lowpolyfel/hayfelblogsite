@@ -22,9 +22,10 @@ export const links = [
 // Accesos a lo demás del sitio
 export const siteLinks = [
   { label: 'EL BLOG', href: '#', note: 'entradas y bitácora' },
+  { label: 'CALENDARIO', href: '#calendario', note: 'qué viene ahora' },
   { label: 'VERSIÓN LEGACY', href: '#legacy', note: 'la home anterior' },
 ]
 
-export const jpLine = '全 て の リ ン ク が こ こ に あ り ま す 。'
+export const jpLine = '走 り 出 せ 、 今 す ぐ に'
 
 export const marquee = 'TODOS LOS ENLACES ~ SIN INTERMEDIARIOS ~ HAYFEL ~ '

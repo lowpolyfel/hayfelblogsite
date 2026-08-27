@@ -9,8 +9,8 @@ import { Globe3D, Y2kCorners, Y2kDivider } from '../../shared/ui/Y2kBits'
 import { confetti } from '../../shared/lib/confetti'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
-  badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots, initialGuests,
-  jpLines, navLinks, notice, posts, socialLinks, statement, tags,
+  badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots, heroLinks,
+  initialGuests, jpLines, navLinks, notice, posts, socialLinks, statement, tags,
 } from './data/content'
 import './scrapbook.css'
 
@@ -75,12 +75,16 @@ export function ScrapbookPage() {
           <div className="scb-herophoto" aria-hidden="true" />
 
           <div className="scb-heroinner">
-            <span className="scb-kicker">00 — INICIO</span>
-            {/* El relleno del texto sale de --hero-word-img (imagen a futuro) */}
+            <span className="scb-kicker">EST. 2020</span>
             <h1 className="scb-title">HAYFEL</h1>
-            <p className="scb-tagline">blog personal · escrito a mano · sin editar</p>
-            <div className="scb-herochips">
-              {badges.slice(0, 3).map((b) => <span key={b}>{b}</span>)}
+            <p className="scb-tagline">blog personal</p>
+            {/* Accesos directos a los otros sitios del web */}
+            <div className="scb-herolinks">
+              {heroLinks.map((l) => (
+                <a key={l.label} className="scb-herolink" href={l.href}>
+                  <b>{l.label}</b><em>{l.note}</em><span aria-hidden="true">→</span>
+                </a>
+              ))}
             </div>
             <p className="y2k-jp scb-herojp">{jpLines[0]}</p>
           </div>
