@@ -12,7 +12,7 @@
   color:#fff; letter-spacing:-2px;
 }
 .boots-bar{
-  width:min(340px,72vw); height:16px; background:transparent;
+  width:min(560px,86vw); height:20px; background:transparent;
   border:3px solid var(--crimson-hi,#ff2d4d);
 }
 .boots-fill{

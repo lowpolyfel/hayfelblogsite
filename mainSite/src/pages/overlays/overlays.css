@@ -1,0 +1,21 @@
+/* Envoltura de la sección oculta de overlays. El componente de dentro trae
+   su propio CSS; aquí solo va la salida. */
+
+.ov{ position:relative; }
+
+/* Arranca invisible y solo aparece al acercar el puntero. En OBS (Browser
+   Source) no hay puntero, así que nunca sale en la transmisión. */
+.ov-exit{
+  position:fixed; top:10px; left:50%; transform:translateX(-50%);
+  z-index:9000; padding:6px 14px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px;
+  letter-spacing:.08em; text-decoration:none;
+  color:rgba(217,213,197,.85); background:rgba(0,0,0,.7);
+  border:1px solid rgba(217,213,197,.3);
+  opacity:0; transition:opacity .25s ease;
+}
+.ov-exit:hover, .ov-exit:focus-visible{ opacity:1; }
+/* Zona sensible por encima del enlace, para poder encontrarlo sin verlo */
+.ov-exit::before{
+  content:''; position:absolute; top:-10px; left:-40px; right:-40px; bottom:-10px;
+}

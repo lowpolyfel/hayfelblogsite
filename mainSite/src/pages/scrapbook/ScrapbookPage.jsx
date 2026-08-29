@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Icon } from '../../shared/assets/icons/Icon'
 import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
 import { Starfield } from '../../shared/assets/patterns/Starfield'
@@ -40,6 +40,23 @@ export function ScrapbookPage() {
     confetti(e.clientX, e.clientY)
   }
 
+  // Entrada a la sección oculta de overlays: cinco toques seguidos en el
+  // logo. Si se deja de picar más de un segundo y medio, la cuenta se
+  // reinicia, para que no se abra por acumular clicks sueltos con el tiempo.
+  const toques = useRef(0)
+  const toqueTimer = useRef(0)
+  useEffect(() => () => clearTimeout(toqueTimer.current), [])
+  function tocarLogo() {
+    clearTimeout(toqueTimer.current)
+    toques.current += 1
+    if (toques.current >= 5) {
+      toques.current = 0
+      window.location.hash = '#overlays'
+      return
+    }
+    toqueTimer.current = setTimeout(() => { toques.current = 0 }, 1500)
+  }
+
   function sign() {
     if (!gmsg.trim()) return
     setGuests([{ name: gname.trim() || 'anon', message: gmsg.trim() }, ...guests])
@@ -58,7 +75,7 @@ export function ScrapbookPage() {
 
       {/* Barra fija: acompaña el scroll de punta a punta */}
       <header className="scb-nav">
-        <span className="scb-logo">HAYFEL</span>
+        <span className="scb-logo" onClick={tocarLogo}>HAYFEL</span>
         <span className="scb-navmeta y2k-jp">{jpLines[2]}</span>
         <button className="scb-hamburger" aria-label={navOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={navOpen}
           onClick={() => setNavOpen((v) => !v)}>

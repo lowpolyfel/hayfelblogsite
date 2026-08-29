@@ -3,11 +3,15 @@ import { LegacyPage } from './pages/legacy/LegacyPage'
 import { ScrapbookPage } from './pages/scrapbook/ScrapbookPage'
 import { RedesPage } from './pages/redes/RedesPage'
 import { CalendarioPage } from './pages/calendario/CalendarioPage'
+import { OverlaysPage } from './pages/overlays/OverlaysPage'
 import { TornFilters } from './shared/ui/TornPaper'
 
 // Ruteo mínimo por hash, sin dependencias nuevas: redes en #redes,
 // calendario en #calendario y la versión anterior guardada en #legacy, sin
 // afectar el hosting estático (nada de rutas de servidor que configurar).
+//
+// #overlays no aparece en ningún menú ni enlace: es una sección oculta a la
+// que solo se llega picando cinco veces el logo de la barra del inicio.
 function useHash() {
   const [hash, setHash] = useState(() => window.location.hash)
   useEffect(() => {
@@ -29,6 +33,7 @@ export default function App() {
   if (hash === '#legacy') page = <LegacyPage />
   else if (hash === '#redes') page = <RedesPage />
   else if (hash === '#calendario') page = <CalendarioPage />
+  else if (hash === '#overlays') page = <OverlaysPage />
   else page = <ScrapbookPage />
 
   return (
