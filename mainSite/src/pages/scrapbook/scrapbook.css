@@ -54,7 +54,9 @@
   display:flex; align-items:center; justify-content:space-between; gap:14px;
   padding:12px 20px; background:var(--ink); border-bottom:4px solid var(--crimson);
 }
-.scb-logo{ font-family:var(--display-font); font-size:24px; color:#fff; letter-spacing:-1px; }
+/* Sin cursor de enlace ni selección: la entrada oculta no se anuncia */
+.scb-logo{ font-family:var(--display-font); font-size:24px; color:#fff; letter-spacing:-1px;
+  user-select:none; -webkit-user-select:none; }
 .scb-navmeta{ font-family:var(--mono-font); font-size:10px; letter-spacing:2px; color:var(--paper-dim); }
 .scb-hamburger{
   all:unset; display:flex; align-items:center; gap:8px; cursor:pointer;
