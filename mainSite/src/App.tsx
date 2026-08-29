@@ -10,8 +10,9 @@ import { TornFilters } from './shared/ui/TornPaper'
 // calendario en #calendario y la versión anterior guardada en #legacy, sin
 // afectar el hosting estático (nada de rutas de servidor que configurar).
 //
-// #overlays no aparece en ningún menú ni enlace: es una sección oculta a la
-// que solo se llega picando cinco veces el logo de la barra del inicio.
+// #overlays y #overlays-fin (apertura y cierre del directo) no aparecen en
+// ningún menú ni enlace: son secciones ocultas a las que solo se llega
+// picando cinco veces el logo de la barra del inicio.
 function useHash() {
   const [hash, setHash] = useState(() => window.location.hash)
   useEffect(() => {
@@ -33,7 +34,8 @@ export default function App() {
   if (hash === '#legacy') page = <LegacyPage />
   else if (hash === '#redes') page = <RedesPage />
   else if (hash === '#calendario') page = <CalendarioPage />
-  else if (hash === '#overlays') page = <OverlaysPage />
+  else if (hash === '#overlays') page = <OverlaysPage variant="intro" />
+  else if (hash === '#overlays-fin') page = <OverlaysPage variant="outro" />
   else page = <ScrapbookPage />
 
   return (
