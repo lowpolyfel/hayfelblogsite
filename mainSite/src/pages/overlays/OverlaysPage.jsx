@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import HayfelBroadcast from './HayfelBroadcast'
+import { HiddenTools } from '../../shared/ui/HiddenTools'
 import './overlays.css'
 
 // Sección oculta: no está en el menú ni enlazada desde ninguna parte. Se
@@ -11,35 +11,19 @@ import './overlays.css'
 // secuencia arranque desde la primera escena.
 export function OverlaysPage({ variant = 'intro' }) {
   const esCierre = variant === 'outro'
-  const [toolsVisible, setToolsVisible] = useState(false)
-  const hideTimer = useRef(null)
-
-  useEffect(() => {
-    const showTools = () => {
-      setToolsVisible(true)
-      clearTimeout(hideTimer.current)
-      hideTimer.current = setTimeout(() => setToolsVisible(false), 5000)
-    }
-
-    window.addEventListener('mousemove', showTools)
-    return () => {
-      window.removeEventListener('mousemove', showTools)
-      clearTimeout(hideTimer.current)
-    }
-  }, [])
-
   return (
     <div className="ov">
       <HayfelBroadcast key={variant} program={esCierre ? 'end' : 'start'} />
 
-      {/* Invisibles hasta que el ratón se mueve; se ocultan después de 5s
-          sin movimiento. No aparecen en la captura de OBS. */}
-      <nav className={`ov-tools ${toolsVisible ? 'visible' : ''}`}>
-        <a href="#">← salir</a>
-        <a href={esCierre ? '#overlays' : '#overlays-fin'}>
-          {esCierre ? 'ver apertura' : 'ver cierre'}
-        </a>
-      </nav>
+      <HiddenTools
+        links={[
+          { href: '#', label: '← salir' },
+          {
+            href: esCierre ? '#overlays' : '#overlays-fin',
+            label: esCierre ? 'ver apertura' : 'ver cierre',
+          },
+        ]}
+      />
     </div>
   )
 }

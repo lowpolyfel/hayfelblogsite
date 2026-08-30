@@ -1,0 +1,7 @@
+/* Envoltura de la sección oculta de waves. El componente de dentro trae sus
+   propios estilos en línea; aquí solo se fija a la ventana para que no
+   quede barra de scroll por encima del shader. */
+
+.wv{
+  position:fixed; inset:0; overflow:hidden; background:#1C1C1C;
+}
