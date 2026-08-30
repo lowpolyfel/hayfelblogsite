@@ -1,0 +1,20 @@
+/* Barra de salida de las secciones ocultas (overlays y waves). Discreta a
+   propósito: no debe competir con lo que hay detrás ni salir en captura. */
+
+.hidden-tools{
+  position:fixed; top:0; left:50%; transform:translateX(-50%);
+  z-index:9000; display:flex; gap:8px; padding:8px 30px 15px;
+  opacity:0; pointer-events:none; transition:opacity .25s ease;
+}
+.hidden-tools.on{ opacity:1; pointer-events:auto; }
+.hidden-tools a{
+  padding:4px 10px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:10px;
+  letter-spacing:.08em; text-decoration:none; white-space:nowrap;
+  color:rgba(217,213,197,.6); background:rgba(0,0,0,.95);
+  border:1px solid rgba(217,213,197,.2);
+  transition:color .2s ease, border-color .2s ease, background .2s ease;
+}
+.hidden-tools a:hover{
+  color:#FD1348; border-color:#FD1348; background:rgba(0,0,0,.98);
+}

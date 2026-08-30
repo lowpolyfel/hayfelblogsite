@@ -4,15 +4,17 @@ import { ScrapbookPage } from './pages/scrapbook/ScrapbookPage'
 import { RedesPage } from './pages/redes/RedesPage'
 import { CalendarioPage } from './pages/calendario/CalendarioPage'
 import { OverlaysPage } from './pages/overlays/OverlaysPage'
+import { WavesPage } from './pages/waves/WavesPage'
 import { TornFilters } from './shared/ui/TornPaper'
 
 // Ruteo mínimo por hash, sin dependencias nuevas: redes en #redes,
 // calendario en #calendario y la versión anterior guardada en #legacy, sin
 // afectar el hosting estático (nada de rutas de servidor que configurar).
 //
-// #overlays y #overlays-fin (apertura y cierre del directo) no aparecen en
-// ningún menú ni enlace: son secciones ocultas a las que solo se llega
-// picando cinco veces el logo de la barra del inicio.
+// #overlays y #overlays-fin (apertura y cierre del directo) y #waves no
+// aparecen en ningún menú ni enlace: son secciones ocultas. A los overlays
+// se llega picando cinco veces el logo de la barra del inicio; a waves,
+// seis veces el HAYFEL grande del centro de la portada.
 function useHash() {
   const [hash, setHash] = useState(() => window.location.hash)
   useEffect(() => {
@@ -36,6 +38,7 @@ export default function App() {
   else if (hash === '#calendario') page = <CalendarioPage />
   else if (hash === '#overlays') page = <OverlaysPage variant="intro" />
   else if (hash === '#overlays-fin') page = <OverlaysPage variant="outro" />
+  else if (hash === '#waves') page = <WavesPage />
   else page = <ScrapbookPage />
 
   return (

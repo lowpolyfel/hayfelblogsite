@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Icon } from '../../shared/assets/icons/Icon'
 import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
 import { Starfield } from '../../shared/assets/patterns/Starfield'
@@ -7,6 +7,7 @@ import { BootScreen } from '../../shared/ui/BootScreen'
 import { TornPaper } from '../../shared/ui/TornPaper'
 import { Globe3D, Y2kCorners, Y2kDivider } from '../../shared/ui/Y2kBits'
 import { confetti } from '../../shared/lib/confetti'
+import { useSecretTaps } from '../../shared/lib/useSecretTaps'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
   badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots, heroLinks,
@@ -40,22 +41,11 @@ export function ScrapbookPage() {
     confetti(e.clientX, e.clientY)
   }
 
-  // Entrada a la sección oculta de overlays: cinco toques seguidos en el
-  // logo. Si se deja de picar más de un segundo y medio, la cuenta se
-  // reinicia, para que no se abra por acumular clicks sueltos con el tiempo.
-  const toques = useRef(0)
-  const toqueTimer = useRef(0)
-  useEffect(() => () => clearTimeout(toqueTimer.current), [])
-  function tocarLogo() {
-    clearTimeout(toqueTimer.current)
-    toques.current += 1
-    if (toques.current >= 5) {
-      toques.current = 0
-      window.location.hash = '#overlays'
-      return
-    }
-    toqueTimer.current = setTimeout(() => { toques.current = 0 }, 1500)
-  }
+  // Entradas a las secciones ocultas: cinco toques en el logo de la barra
+  // llevan a los overlays del directo, seis en el HAYFEL grande del centro
+  // de la portada llevan a las olas.
+  const tocarLogo = useSecretTaps(5, '#overlays')
+  const tocarTitulo = useSecretTaps(6, '#waves')
 
   function sign() {
     if (!gmsg.trim()) return
@@ -93,7 +83,7 @@ export function ScrapbookPage() {
 
           <div className="scb-heroinner">
             <span className="scb-kicker">EST. 2020</span>
-            <h1 className="scb-title">HAYFEL</h1>
+            <h1 className="scb-title" onClick={tocarTitulo}>HAYFEL</h1>
             <p className="scb-tagline">blog personal</p>
             {/* Accesos directos a los otros sitios del web */}
             <div className="scb-herolinks">
