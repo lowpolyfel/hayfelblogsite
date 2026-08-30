@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import HayfelBroadcast from './HayfelBroadcast'
-import HayfelBroadcastOutro from './HayfelBroadcastOutro'
 import './overlays.css'
 
 // Sección oculta: no está en el menú ni enlazada desde ninguna parte. Se
 // llega solo picando cinco veces el logo HAYFEL de la barra del inicio.
 //
-// Los dos componentes de dentro (apertura y cierre) se dejan tal cual: el
-// de cierre es copia del de apertura con los textos cambiados, misma
-// estructura y mismo CSS. Todo lo que hace falta añadir (salida y cambio
-// entre uno y otro) vive aquí fuera, envolviéndolos.
+// Apertura y cierre son dos direcciones distintas (#overlays y
+// #overlays-fin) sobre el mismo componente: el programa se le pasa por
+// prop, y el key lo remonta al cambiar de una a otra para que la
+// secuencia arranque desde la primera escena.
 export function OverlaysPage({ variant = 'intro' }) {
   const esCierre = variant === 'outro'
   const [toolsVisible, setToolsVisible] = useState(false)
@@ -31,7 +30,7 @@ export function OverlaysPage({ variant = 'intro' }) {
 
   return (
     <div className="ov">
-      {esCierre ? <HayfelBroadcastOutro /> : <HayfelBroadcast />}
+      <HayfelBroadcast key={variant} program={esCierre ? 'end' : 'start'} />
 
       {/* Invisibles hasta que el ratón se mueve; se ocultan después de 5s
           sin movimiento. No aparecen en la captura de OBS. */}
