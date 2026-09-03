@@ -3,6 +3,12 @@
    quede barra de scroll por encima. */
 
 .wv{
+  /* El papel roto pinta sus dos capas con estas variables. Las otras páginas
+     las declaran en su propio ámbito (.scb, .rds, .lobby); aquí hay que
+     repetirlas o las capas salen transparentes. */
+  --crimson:#c8102e; --crimson-hi:#ff2d4d;
+  --ink:#111111; --ink-2:#1b1b1b; --paper:#f3f0e6;
+
   position:fixed; inset:0; overflow:hidden; background:#1C1C1C;
 }
 
@@ -11,10 +17,22 @@
 .wv-bg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 /* La palabra va encima del canvas y no debe atrapar el ratón: la barra de
    salida se despierta con el movimiento, no con un clic. */
+/* Recorte de papel roto que sostiene la palabra. Es el mismo tratamiento de
+   la portada, en versión pequeña: filo rasgado arriba y abajo, y el ancho
+   ceñido al texto en vez de a sangre. */
+.wv-panel{
+  position:relative; z-index:1;
+  width:min(760px, calc(100% - 48px));
+  padding:26px 34px;
+  display:grid; place-items:center;
+}
 .wv-legacy .blurtype{
   position:relative; z-index:1; width:100%;
   display:flex; align-items:center; justify-content:center; pointer-events:none;
 }
+/* Dentro del recorte el texto ya no compite con las estrellas, así que puede
+   ocupar más ancho del panel. */
+.wv-panel .blurtype svg{ width:min(88%, 620px); }
 
 /* Filtro de tubo: líneas de barrido cada 3 px en multiplicar, más el
    viñeteado hacia los bordes. Va por encima de la palabra, no solo del
@@ -45,6 +63,20 @@
     background:repeating-linear-gradient(to bottom,
       rgba(0,0,0,.22) 0 2px, rgba(0,0,0,0) 2px 4px);
   }
+}
+/* Selector de color del fondo. Va por encima del filtro de tubo para que no
+   se le multipliquen encima las líneas de barrido. */
+.wv-bgswitch{
+  all:unset; position:fixed; left:14px; bottom:14px; z-index:3; cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+  background:#111111; color:#f3f0e6; border:3px solid #ff2d4d; padding:8px 12px;
+  font-family:'Space Mono',ui-monospace,'Courier New',monospace;
+  font-size:10px; font-weight:700; letter-spacing:1px;
+}
+.wv-bgswitch:hover{ background:#ff2d4d; color:#111111; }
+
+@media (max-width:640px){
+  .wv-panel{ width:calc(100% - 28px); padding:20px 22px; }
 }
 @media (prefers-reduced-motion:reduce){
   .wv-crt::after{ animation:none; }

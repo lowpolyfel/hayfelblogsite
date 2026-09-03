@@ -15,22 +15,14 @@ import {
 } from './data/content'
 import './scrapbook.css'
 
-const BG_PRESETS = [
-  { variant: 0, red: '#c8102e', label: 'crimson · deriva' },
-  { variant: 1, red: '#1450c8', label: 'azul · lluvia' },
-  { variant: 2, red: '#c89010', label: 'dorado · galaxia' },
-]
-
 export function ScrapbookPage() {
   const [booting, setBooting] = useState(true)
   const [navOpen, setNavOpen] = useState(false)
-  const [bgIdx, setBgIdx] = useState(0)
   const [visits, setVisits] = useState(13407)
   const [guests, setGuests] = useState(initialGuests)
   const [gname, setGname] = useState('')
   const [gmsg, setGmsg] = useState('')
 
-  const bg = BG_PRESETS[bgIdx % BG_PRESETS.length]
   const bootDone = useCallback(() => setBooting(false), [])
 
   function bumpVisits(e) {
@@ -54,11 +46,8 @@ export function ScrapbookPage() {
     <div className="scb">
       <BootScreen lines={bootLines} onDone={bootDone} />
 
-      <Starfield className="scb-bg" variant={bg.variant} red={bg.red} paused={navOpen || booting} />
-
-      <button className="scb-bgswitch" onClick={() => setBgIdx((i) => (i + 1) % BG_PRESETS.length)} aria-label="Cambiar fondo">
-        <Icon name="sparkle" size={11} /> {bg.label}
-      </button>
+      {/* El selector de color del fondo vive en #waves-2, no aquí */}
+      <Starfield className="scb-bg" variant={0} red="#c8102e" paused={navOpen || booting} />
 
       {/* Barra fija: acompaña el scroll de punta a punta */}
       <header className="scb-nav">
