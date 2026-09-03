@@ -1,7 +1,17 @@
-/* Envoltura de la sección oculta de waves. El componente de dentro trae sus
-   propios estilos en línea; aquí solo se fija a la ventana para que no
-   quede barra de scroll por encima del shader. */
+/* Envoltura de las secciones ocultas de waves. El componente de olas trae
+   sus propios estilos en línea; aquí solo se fija a la ventana para que no
+   quede barra de scroll por encima. */
 
 .wv{
   position:fixed; inset:0; overflow:hidden; background:#1C1C1C;
+}
+
+/* ---------- waves 2: fondo de estrellas ---------- */
+.wv-legacy{ display:grid; place-items:center; }
+.wv-bg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+/* La palabra va encima del canvas y no debe atrapar el ratón: la barra de
+   salida se despierta con el movimiento, no con un clic. */
+.wv-legacy .blurtype{
+  position:relative; z-index:1; width:100%;
+  display:flex; align-items:center; justify-content:center; pointer-events:none;
 }

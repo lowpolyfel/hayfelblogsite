@@ -5,6 +5,7 @@ import { RedesPage } from './pages/redes/RedesPage'
 import { CalendarioPage } from './pages/calendario/CalendarioPage'
 import { OverlaysPage } from './pages/overlays/OverlaysPage'
 import { WavesPage } from './pages/waves/WavesPage'
+import { WavesLegacyPage } from './pages/waves/WavesLegacyPage'
 import { TornFilters } from './shared/ui/TornPaper'
 
 // Ruteo mínimo por hash, sin dependencias nuevas: redes en #redes,
@@ -39,6 +40,7 @@ export default function App() {
   else if (hash === '#overlays') page = <OverlaysPage variant="intro" />
   else if (hash === '#overlays-fin') page = <OverlaysPage variant="outro" />
   else if (hash === '#waves') page = <WavesPage />
+  else if (hash === '#waves-2') page = <WavesLegacyPage />
   else page = <ScrapbookPage />
 
   return (

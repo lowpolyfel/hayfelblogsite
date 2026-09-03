@@ -10,7 +10,9 @@ export const iconPaths = {
   github: <><path d="M9 19c-4 1.5-4-2-6-2.5" /><path d="M15 22v-3.5c0-1 .1-1.5-.5-2 3-.3 6-1.5 6-6.5a5 5 0 0 0-1.3-3.5A4.5 4.5 0 0 0 19 3s-1-.3-3.5 1.3a12 12 0 0 0-7 0C6 2.7 5 3 5 3a4.5 4.5 0 0 0-.2 3.5A5 5 0 0 0 3.5 10c0 5 3 6.2 6 6.5-.5.5-.6 1.2-.5 2V22" /></>,
   instagram: <><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><path d="M17.5 6.5h.01" /></>,
   twitter: <path d="m5 4 14 16M19 4 5 20" />,
-  youtube: <><path d="M22 12s0-4-1-5-5-1H8C4 6 3 7 3 12s1 6 5 6h8c4 0 5-1 5-6z" /><path d="m10 9 5 3-5 3z" /></>,
+  // El contorno venía con un tramo `s` de seis números: el segundo par se
+  // quedaba a medias y el navegador descartaba el trazo entero.
+  youtube: <><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8C22 15.2 22 12 22 12s0-3.2-.4-4.8z" /><path d="m10 9 5 3-5 3z" /></>,
   linkedin: <><path d="M5 9v11M5 5v.01M10 20V9h5c3 0 4 2 4 5v6M10 14c0-3 2-5 5-5" /></>,
   tiktok: <><path d="M13 3v11.2a3.3 3.3 0 1 1-2.6-3.23" /><path d="M13 3c.4 2.6 2.3 4.5 5 4.9" /></>,
   twitch: <><path d="M5 3h14v11l-4 4h-3l-3 3v-3H5z" /><path d="M13 7v5M9 7v5" /></>,
