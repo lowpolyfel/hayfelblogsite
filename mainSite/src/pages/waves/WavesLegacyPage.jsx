@@ -10,6 +10,9 @@ export function WavesLegacyPage() {
     <div className="wv wv-legacy">
       <Starfield className="wv-bg" variant={0} red="#c8102e" />
       <BlurType id="wv2-blurtype" />
+      {/* Rejilla de líneas de barrido y viñeteado: el mismo filtro de tubo
+          que lleva la versión legacy sobre su fondo de estrellas. */}
+      <div className="wv-crt" aria-hidden="true" />
       <HiddenTools
         links={[
           { href: '#', label: '← salir' },

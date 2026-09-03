@@ -15,3 +15,37 @@
   position:relative; z-index:1; width:100%;
   display:flex; align-items:center; justify-content:center; pointer-events:none;
 }
+
+/* Filtro de tubo: líneas de barrido cada 3 px en multiplicar, más el
+   viñeteado hacia los bordes. Va por encima de la palabra, no solo del
+   fondo, que es lo que hace que se lea como una imagen emitida y no como
+   una textura pegada detrás. */
+.wv-crt{
+  position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:repeating-linear-gradient(to bottom,
+    rgba(0,0,0,.22) 0 1px, rgba(0,0,0,0) 1px 3px);
+  mix-blend-mode:multiply;
+  box-shadow:inset 0 0 170px rgba(0,0,0,.55);
+}
+/* Segunda capa: el barrido lento que recorre la pantalla y el brillo suave
+   del fósforo. En pantallas de mucha densidad las líneas de 1 px se comen
+   el detalle, así que ahí se abre el paso a 4 px. */
+.wv-crt::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(to bottom,
+    rgba(255,255,255,0) 0%, rgba(255,255,255,.045) 48%, rgba(255,255,255,0) 100%);
+  animation:wvRoll 7s linear infinite;
+}
+@keyframes wvRoll{
+  from{ transform:translateY(-100%); }
+  to{ transform:translateY(100%); }
+}
+@media (min-resolution:2dppx){
+  .wv-crt{
+    background:repeating-linear-gradient(to bottom,
+      rgba(0,0,0,.22) 0 2px, rgba(0,0,0,0) 2px 4px);
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .wv-crt::after{ animation:none; }
+}

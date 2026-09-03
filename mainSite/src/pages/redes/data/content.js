@@ -1,13 +1,3 @@
-// Todo el texto largo es Lorem Ipsum a propósito: es relleno de diseño, no
-// datos reales de la persona detrás del sitio.
-
-export const profile = {
-  name: 'HAYFEL',
-  handle: '@hayfel',
-  bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.',
-  meta: 'todos los enlaces en un solo lugar',
-}
-
 // `href: null` = todavía sin enlazar; se muestra como "próximamente".
 // Cuando tenga URL real, abre en pestaña nueva sin tocar nada más.
 export const links = [
@@ -19,13 +9,9 @@ export const links = [
   { name: 'github', icon: 'github', handle: 'hayfel', note: 'código suelto', href: null, tone: 'ink' },
 ]
 
-// Accesos a lo demás del sitio
-export const siteLinks = [
-  { label: 'EL BLOG', href: '#', note: 'entradas y bitácora' },
-  { label: 'CALENDARIO', href: '#calendario', note: 'qué viene ahora' },
-  { label: 'VERSIÓN LEGACY', href: '#legacy', note: 'la home anterior' },
-]
+export const headCopy = {
+  title: 'DÓNDE MÁS ESTOY',
+  note: 'todavía sin enlazar, pero ahí van',
+}
 
 export const jpLine = '走 り 出 せ 、 今 す ぐ に'
-
-export const marquee = 'TODOS LOS ENLACES ~ SIN INTERMEDIARIOS ~ HAYFEL ~ '
