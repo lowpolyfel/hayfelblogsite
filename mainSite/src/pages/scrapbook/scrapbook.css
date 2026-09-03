@@ -26,14 +26,6 @@
 
 .scb-bg{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; background:var(--crimson); }
 
-.scb-bgswitch{
-  all:unset; position:fixed; left:14px; bottom:14px; z-index:900; cursor:pointer;
-  display:flex; align-items:center; gap:6px; background:var(--ink); color:var(--paper);
-  border:3px solid var(--crimson-hi); padding:8px 12px;
-  font-family:var(--mono-font); font-size:10px; font-weight:700; letter-spacing:1px;
-}
-.scb-bgswitch:hover{ background:var(--crimson-hi); color:var(--ink); }
-
 /* El rasgado de papel vive en shared/ui/torn-paper.css: filtro SVG de ruido
    sobre dos capas, en vez de clip-path. Aquí solo las inclinaciones. */
 .rot-0{ transform:rotate(-2.5deg); } .rot-1{ transform:rotate(2deg); }
