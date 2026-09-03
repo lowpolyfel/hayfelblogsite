@@ -11,7 +11,7 @@ import { useSecretTaps } from '../../shared/lib/useSecretTaps'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
   aboutTitle, badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots,
-  heroLinks, initialGuests, jpLines, navLinks, notice, posts, statement, tags,
+  heroLinks, initialGuests, jpLines, marquee, navLinks, notice, posts, statement, tags,
 } from './data/content'
 import './scrapbook.css'
 
@@ -106,6 +106,11 @@ export function ScrapbookPage() {
           <span className="scb-pin p2" aria-hidden="true" />
         </Reveal>
       </section>
+
+      {/* Tira corrediza entre la portada y el manifiesto */}
+      <div className="scb-marquee" aria-hidden="true">
+        <span>{marquee.repeat(6)}</span>
+      </div>
 
       {/* ---------- STATEMENT ---------- */}
       <Reveal as="section" variant="up" className="scb-statement torn-host">

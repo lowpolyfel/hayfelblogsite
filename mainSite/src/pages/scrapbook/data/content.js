@@ -5,6 +5,10 @@ export { bootLines, navLinks, initialGuests } from '../../legacy/data/content'
 
 export const statement = 'MIS REDES, HORARIOS Y MÁS COSILLAS'
 
+// Tira corrediza entre la portada y el manifiesto. Se repite en pantalla,
+// así que conviene que sea corta y en mayúsculas.
+export const marquee = 'TODOS LOS ENLACES ~ SIN INTERMEDIARIOS ~ HAYFEL ~ '
+
 // ---------- SOBRE MI ----------
 export const aboutTitle = '¿QUIÉN CHOTAS ES HAYFEL?'
 

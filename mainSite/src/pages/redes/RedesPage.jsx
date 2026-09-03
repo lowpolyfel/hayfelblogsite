@@ -1,17 +1,16 @@
 import { useState } from 'react'
 import { Icon } from '../../shared/assets/icons/Icon'
-import { PixelSprite } from '../../shared/assets/sprites/PixelSprite'
 import { Starfield } from '../../shared/assets/patterns/Starfield'
 import { Reveal } from '../../shared/ui/Reveal'
 import { TornPaper } from '../../shared/ui/TornPaper'
-import { Y2kCorners, Y2kDivider } from '../../shared/ui/Y2kBits'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import { navLinks } from '../legacy/data/content'
-import { jpLine, links, marquee, profile, siteLinks } from './data/content'
+import { headCopy, jpLine, links } from './data/content'
 import './redes.css'
 
-// Sitio alterno tipo linktree: misma paleta, mismo fondo de estrellas y las
-// mismas piezas (papel roto para separar, marcos Y2K para las piezas).
+// Sitio alterno tipo linktree. Ya no hay ficha de perfil ni accesos al resto
+// del sitio: la página es solo los enlaces, en un panel de cristal que flota
+// sobre el fondo de estrellas y queda encajado entre dos filos rasgados.
 export function RedesPage() {
   const [navOpen, setNavOpen] = useState(false)
 
@@ -28,75 +27,48 @@ export function RedesPage() {
         </button>
       </header>
 
-      {/* ---------- PERFIL ---------- */}
-      <section className="rds-hero">
-        <Reveal as="div" variant="scale" className="rds-card torn-host">
-          <TornPaper cut="both" base="crimson" top="ink2" />
-
-          <div className="rds-avatar y2k-frame dark">
-            <Y2kCorners />
-            <div className="y2k-inner flush">
-              <PixelSprite accent="#c8102e" eye="#ffffff" />
-              <span className="y2k-tint" aria-hidden="true" />
-            </div>
-          </div>
-
-          <h1 className="rds-name">{profile.name}</h1>
-          <span className="rds-handle">{profile.handle}</span>
-          <p className="rds-bio">{profile.bio}</p>
-          <span className="rds-meta">{profile.meta}</span>
-        </Reveal>
-      </section>
-
-      <div className="rds-marquee" aria-hidden="true">
-        <span>{marquee.repeat(6)}</span>
-      </div>
-
       {/* ---------- ENLACES ---------- */}
-      <section className="rds-linkswrap torn-host">
-        <TornPaper cut="both" base="paper" top="ink2" />
-
-        <Reveal as="div" variant="up" className="rds-sectionhead">
-          <div><span className="rds-kicker">01 — ENLACES</span><h2>DÓNDE MÁS ESTOY</h2></div>
-          <span className="rds-note">todavía sin enlazar, pero ahí van</span>
-        </Reveal>
-
-        <div className="rds-links">
-          {links.map((l, i) => {
-            const body = (
-              <>
-                <span className={`rds-linkicon tone-${l.tone}`}><Icon name={l.icon} size={20} /></span>
-                <span className="rds-linktext">
-                  <b>{l.name}</b>
-                  <em>{l.handle} · {l.note}</em>
-                </span>
-                <span className="rds-linkgo">{l.href ? '↗' : 'PRONTO'}</span>
-              </>
-            )
-            const cls = `rds-link y2k-frame ${i % 2 ? 'dark' : ''} ${l.href ? '' : 'soon'}`
-            return l.href ? (
-              <Reveal as="a" key={l.name} variant="up" delay={i * 70} className={cls}
-                href={l.href} target="_blank" rel="noreferrer">
-                <Y2kCorners />
-                <div className="y2k-inner flush rds-linkinner">{body}</div>
-              </Reveal>
-            ) : (
-              <Reveal as="span" key={l.name} variant="up" delay={i * 70} className={cls} aria-disabled="true">
-                <Y2kCorners />
-                <div className="y2k-inner flush rds-linkinner">{body}</div>
-              </Reveal>
-            )
-          })}
+      {/* Los filos rasgados van sueltos arriba y abajo en vez de rellenar la
+          sección entera: así el fondo de estrellas se sigue viendo por
+          detrás del panel, que es lo que lo hace flotar. */}
+      <section className="rds-linkswrap">
+        <div className="rds-cut torn-host" aria-hidden="true">
+          <TornPaper cut="bottom" base="crimson" top="ink" />
         </div>
 
-        <Y2kDivider jp={jpLine} />
+        <Reveal as="div" variant="up" className="rds-glass">
+          <div className="rds-glasshead">
+            <h1>{headCopy.title}</h1>
+            <span className="rds-note">{headCopy.note}</span>
+          </div>
 
-        <div className="rds-site">
-          {siteLinks.map((s, i) => (
-            <Reveal as="a" key={s.label} variant="up" delay={i * 80} className="rds-sitelink" href={s.href}>
-              <b>{s.label}</b><em>{s.note}</em><span>→</span>
-            </Reveal>
-          ))}
+          <div className="rds-links">
+            {links.map((l, i) => {
+              const body = (
+                <>
+                  <span className={`rds-linkicon tone-${l.tone}`}><Icon name={l.icon} size={22} /></span>
+                  <span className="rds-linktext">
+                    <b>{l.name}</b>
+                    <em>{l.handle}</em>
+                    <i>{l.note}</i>
+                  </span>
+                  <span className="rds-linkgo">{l.href ? '↗' : 'PRONTO'}</span>
+                </>
+              )
+              const cls = `rds-link ${l.href ? '' : 'soon'}`
+              return l.href ? (
+                <Reveal as="a" key={l.name} variant="up" delay={i * 60} className={cls}
+                  href={l.href} target="_blank" rel="noreferrer">{body}</Reveal>
+              ) : (
+                <Reveal as="span" key={l.name} variant="up" delay={i * 60} className={cls}
+                  aria-disabled="true">{body}</Reveal>
+              )
+            })}
+          </div>
+        </Reveal>
+
+        <div className="rds-cut torn-host" aria-hidden="true">
+          <TornPaper cut="top" base="crimson" top="ink" />
         </div>
       </section>
 

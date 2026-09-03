@@ -130,6 +130,18 @@
   border:3px solid var(--ink); z-index:4; }
 .scb-pin.p1{ top:22px; left:6%; } .scb-pin.p2{ top:30px; right:7%; }
 
+/* ---------- MARQUESINA (entre la portada y el manifiesto) ---------- */
+.scb-marquee{
+  position:relative; z-index:2; overflow:hidden; white-space:nowrap; padding:11px 0;
+  background:var(--ink); border-top:3px solid var(--crimson); border-bottom:3px solid var(--crimson);
+}
+.scb-marquee span{
+  display:inline-block; padding-left:100%;
+  font-family:var(--display-font); font-size:15px; letter-spacing:3px; color:var(--crimson-hi);
+  animation:scbSlide 34s linear infinite;
+}
+@keyframes scbSlide{ to{ transform:translateX(-100%); } }
+
 /* ---------- STATEMENT ---------- */
 .scb-statement{
   z-index:2; padding:96px 24px;
@@ -373,4 +385,7 @@
   .scb *,.scb *::before,.scb *::after{
     animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;
   }
+  /* Sin corredera el texto quedaría fuera de cuadro para siempre: se planta
+     al inicio y se lee quieto. */
+  .scb-marquee span{ padding-left:0; animation:none !important; }
 }
