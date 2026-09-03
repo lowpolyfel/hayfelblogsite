@@ -10,8 +10,8 @@ import { confetti } from '../../shared/lib/confetti'
 import { useSecretTaps } from '../../shared/lib/useSecretTaps'
 import { PersonaMenu } from '../../shared/ui/PersonaMenu'
 import {
-  badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots, heroLinks,
-  initialGuests, jpLines, navLinks, notice, posts, socialLinks, statement, tags,
+  aboutTitle, badges, bio, bootLines, footerWord, gallery, glassCopy, glassSlots,
+  heroLinks, initialGuests, jpLines, navLinks, notice, posts, statement, tags,
 } from './data/content'
 import './scrapbook.css'
 
@@ -20,9 +20,6 @@ const BG_PRESETS = [
   { variant: 1, red: '#1450c8', label: 'azul · lluvia' },
   { variant: 2, red: '#c89010', label: 'dorado · galaxia' },
 ]
-
-// Los marcos de las entradas alternan claro y oscuro
-const CARD_TONES = ['', 'dark', '', 'dark']
 
 export function ScrapbookPage() {
   const [booting, setBooting] = useState(true)
@@ -85,11 +82,20 @@ export function ScrapbookPage() {
             <span className="scb-kicker">EST. 2020</span>
             <h1 className="scb-title" onClick={tocarTitulo}>HAYFEL</h1>
             <p className="scb-tagline">blog personal</p>
-            {/* Accesos directos a los otros sitios del web */}
+            {/* Accesos directos a los otros sitios del web. Son la única
+                acción de la portada, así que pesan a propósito: bloque
+                grande, sombra dura y flecha que se despega al pasar. */}
             <div className="scb-herolinks">
               {heroLinks.map((l) => (
                 <a key={l.label} className="scb-herolink" href={l.href}>
-                  <b>{l.label}</b><em>{l.note}</em><span aria-hidden="true">→</span>
+                  <span className="scb-herolink-icon" aria-hidden="true">
+                    <Icon name={l.icon} size={20} />
+                  </span>
+                  <span className="scb-herolink-text">
+                    <b>{l.label}</b>
+                    <em>{l.note}</em>
+                  </span>
+                  <span className="scb-herolink-go" aria-hidden="true">→</span>
                 </a>
               ))}
             </div>
@@ -101,17 +107,10 @@ export function ScrapbookPage() {
         </Reveal>
       </section>
 
-      {/* ---------- CINTAS INCLINADAS tipo "no pase" ---------- */}
-      <div className="scb-tapezone" aria-hidden="true">
-        <div className="scb-tape t1" />
-        <div className="scb-tape t2" />
-      </div>
-
       {/* ---------- STATEMENT ---------- */}
       <Reveal as="section" variant="up" className="scb-statement torn-host">
         <TornPaper cut="both" base="paper" top="crimson" />
         <span className="scb-sticker star" aria-hidden="true" />
-        <span className="scb-kicker on-crimson">01 — MANIFIESTO</span>
         <h2>{statement}</h2>
         <span className="scb-sticker boom" aria-hidden="true">✚</span>
       </Reveal>
@@ -128,8 +127,7 @@ export function ScrapbookPage() {
             </div>
           </div>
           <div className="scb-about-copy">
-            <span className="scb-kicker">02 — SOBRE MI</span>
-            <h3>¿LA RAZÓN?</h3>
+            <h3>{aboutTitle}</h3>
             {bio.map((p, i) => <p key={i}>{p}</p>)}
             <div className="scb-chips">{badges.map((b) => <span key={b}>{b}</span>)}</div>
             <div className="scb-tags">{tags.map((t) => <span key={t}>{t}</span>)}</div>
@@ -142,20 +140,16 @@ export function ScrapbookPage() {
       <section className="scb-posts torn-host" id="posts">
         <TornPaper cut="both" base="crimson" top="paper" />
         <Reveal as="div" variant="up" className="scb-sectionhead">
-          <div><span className="scb-kicker on-paper">03 — BITÁCORA</span><h3>ENTRADAS RECIENTES</h3></div>
-          <span className="scb-sectionnote">sin feed, sin algoritmo</span>
+          <div><h3>ÚLTIMAS PUBLICACIONES</h3></div>
         </Reveal>
+        {/* Fichas de billete troquelado: talón numerado a la izquierda y
+            perforado en medio. Nada de contenido todavía, solo el hueco. */}
         <div className="scb-postgrid">
           {posts.map((p, i) => (
-            <Reveal as="article" key={p.title} variant="up" delay={i * 90}
-              className={`scb-postcard y2k-frame ${CARD_TONES[i % 4]} rot-${i % 4}`}>
-              <Y2kCorners />
-              <div className="y2k-inner">
-                <span className="cat">{p.category}</span>
-                <h4>{p.title}</h4>
-                <span className="date">{p.date}</span>
-                <span className="go">LEER →</span>
-              </div>
+            <Reveal as="article" key={p.n} variant="up" delay={i * 90} className="scb-ticket">
+              <span className="scb-ticket-stub" aria-hidden="true">{p.n}</span>
+              <span className="scb-ticket-perf" aria-hidden="true" />
+              <span className="scb-ticket-body">{p.label}</span>
             </Reveal>
           ))}
         </div>
@@ -163,44 +157,36 @@ export function ScrapbookPage() {
         <Reveal as="p" variant="up" className="y2k-pill">{notice}</Reveal>
       </section>
 
-      {/* ---------- VITRINA DE CRISTAL ---------- */}
+      {/* ---------- LO ÚLTIMO DE HAYFEL (vitrina de cristal) ---------- */}
       <section className="scb-glass">
         <Reveal as="div" variant="up" className="scb-glasspanel">
-          <div className="scb-glassrail">
-            {['search', 'tiktok', 'youtube', 'instagram', 'twitch'].map((n) => (
-              <span key={n} className="scb-railbtn"><Icon name={n} size={15} /></span>
+          <div className="scb-glasshead">
+            <h3>{glassCopy.title}</h3>
+            <span className="scb-glasstag">{glassCopy.tag}</span>
+          </div>
+
+          <div className="scb-slots">
+            {glassSlots.map((s, i) => (
+              <Reveal as="figure" key={s.id} variant="scale" delay={i * 70}
+                className="scb-slot" style={{ '--img': `var(--slot-${s.id}, none)` }}>
+                <span className="y2k-tint" aria-hidden="true" />
+                <span className="scb-slot-plat">
+                  <Icon name={s.icon} size={14} /> {s.platform}
+                </span>
+                <span className="scb-slot-soon">PRÓXIMAMENTE</span>
+              </Reveal>
             ))}
           </div>
 
-          <div className="scb-glassmain">
-            <div className="scb-glasshead">
-              <div>
-                <span className="scb-kicker on-glass">04 — {glassCopy.kicker}</span>
-                <h3>{glassCopy.title}</h3>
-              </div>
-              <span className="scb-glasstime">MON · 23:02</span>
-            </div>
-
-            <div className="scb-slots">
-              {glassSlots.map((s, i) => (
-                <Reveal as="figure" key={s.id} variant="scale" delay={i * 80}
-                  className={`scb-slot ${s.span ? `slot-${s.span}` : ''}`}
-                  style={{ '--img': `var(--slot-${s.id}, none)` }}>
-                  <span className="y2k-tint" aria-hidden="true" />
-                  <span className="scb-slotlabel">{s.label}</span>
-                  <span className="scb-slotplus" aria-hidden="true">+</span>
-                </Reveal>
-              ))}
-            </div>
-
-            <div className="scb-glasscard">
-              <b>descripción.</b>
-              <p>{glassCopy.body}</p>
+          <div className="scb-glasscard">
+            <p>{glassCopy.body}</p>
+            <div className="scb-glassfoot">
               <span className="scb-glassmeta">{glassCopy.meta}</span>
+              <button type="button" className="scb-glasscta" disabled>
+                {glassCopy.cta} <span aria-hidden="true">→</span>
+              </button>
             </div>
           </div>
-
-          <span className="scb-glassword" aria-hidden="true">HAYFEL</span>
         </Reveal>
       </section>
 
@@ -208,13 +194,12 @@ export function ScrapbookPage() {
       <section className="scb-stories torn-host" id="firmas">
         <TornPaper cut="bottom" base="paper" top="ink2" />
         <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
-          <div><span className="scb-kicker">05 — VISITAS</span><h3>HISTORIAS</h3></div>
+          <div><h3>HISTORIAS</h3></div>
           <span className="scb-sectionnote">lo que dejó la gente al pasar</span>
         </Reveal>
         <div className="scb-storylist">
           {guests.map((g, i) => (
             <Reveal as="div" key={i + g.message} variant={i % 2 ? 'right' : 'left'} className="scb-story">
-              <div className="pfp" style={{ background: ['#c8102e', '#f3f0e6', '#ff3b52'][i % 3] }} />
               <div><b>{g.name}</b><p>{g.message}</p></div>
             </Reveal>
           ))}
@@ -235,7 +220,7 @@ export function ScrapbookPage() {
         <TornPaper cut="top" base="crimson" top="ink" />
         <Globe3D className="scb-globe g3" rings={5} duration={26} reverse />
         <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
-          <div><span className="scb-kicker">06 — GALERÍA</span><h3>PEDAZOS SUELTOS</h3></div>
+          <div><h3>PEDAZOS SUELTOS</h3></div>
           <span className="scb-sectionnote">recortes sin orden</span>
         </Reveal>
         <div className="scb-gallerygrid">
@@ -247,34 +232,17 @@ export function ScrapbookPage() {
         </div>
       </section>
 
-      {/* ---------- SÍGUEME ---------- */}
-      <section className="scb-social torn-host">
-        <TornPaper cut="both" base="paper" top="ink2" />
-        <Reveal as="div" variant="up" className="scb-sectionhead on-dark">
-          <div><span className="scb-kicker">07 — REDES</span><h3>SÍGUEME</h3></div>
-          <span className="scb-sectionnote">todavía sin enlazar, pero ahí van</span>
-        </Reveal>
-        <div className="scb-sociallist">
-          {socialLinks.map((s, i) => {
-            const body = <><Icon name={s.icon} size={18} /><span>{s.name}</span><em>{s.handle}</em></>
-            return s.href ? (
-              <Reveal as="a" key={s.name} variant="up" delay={i * 60} className="scb-sociallink"
-                href={s.href} target="_blank" rel="noreferrer">{body}</Reveal>
-            ) : (
-              <Reveal as="span" key={s.name} variant="up" delay={i * 60} className="scb-sociallink soon"
-                aria-disabled="true">{body}<i>PRONTO</i></Reveal>
-            )
-          })}
-        </div>
-      </section>
+      {/* La sección SÍGUEME se quitó: los enlaces ya viven en #redes, al que
+          se llega desde el botón de la portada y desde el menú. */}
 
       {/* ---------- FOOTER ---------- */}
       <footer className="scb-footer">
         <div className="scb-footerword">{footerWord}</div>
+        {/* La versión legacy sigue viva en #legacy y su código no se toca:
+            solo se quita el enlace mientras ese sitio está en espera. */}
         <div className="scb-footmeta">
           <span>© 2026</span>
           <button onClick={bumpVisits}>{String(visits).padStart(6, '0')} VISITAS</button>
-          <a href="#legacy">VERSIÓN LEGACY ↗</a>
         </div>
       </footer>
 

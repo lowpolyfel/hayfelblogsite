@@ -11,7 +11,12 @@ export function WavesPage() {
   return (
     <div className="wv">
       <HayfelWaves />
-      <HiddenTools links={[{ href: '#', label: '← salir' }]} />
+      <HiddenTools
+        links={[
+          { href: '#', label: '← salir' },
+          { href: '#waves-2', label: 'ver v2' },
+        ]}
+      />
     </div>
   )
 }

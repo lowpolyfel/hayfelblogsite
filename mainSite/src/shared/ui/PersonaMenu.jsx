@@ -181,7 +181,9 @@ export function PersonaMenu({ open, onClose, items, visits }) {
       <Starfield className="pmenu-stars" variant={0} red={settledAccent} paused={!open} />
 
       <div className="pmenu-basecolor" style={{ background: settledAccent }} aria-hidden="true" />
-      <div key={activeIdx} className="pmenu-wipe" aria-hidden="true"
+      {/* Las claves llevan prefijo: el lavado y el <nav> son hermanos y al
+          arrancar ambos valían 0, así que React los veía repetidos. */}
+      <div key={`w${activeIdx}`} className="pmenu-wipe" aria-hidden="true"
         style={{ background: accent, '--wx': wipeOrigin.x, '--wy': wipeOrigin.y }}
         onAnimationEnd={() => setSettledAccent(accent)} />
 
@@ -213,7 +215,7 @@ export function PersonaMenu({ open, onClose, items, visits }) {
         <span className="count">¤ {String(visits).padStart(6, '0')} VISITAS</span>
       </div>
 
-      <nav className="pmenu-items" ref={menuRef} key={openCount}>
+      <nav className="pmenu-items" ref={menuRef} key={`n${openCount}`}>
         {items.map((item, i) => {
           const body = (
             <>

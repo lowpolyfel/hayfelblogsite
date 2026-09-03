@@ -85,32 +85,50 @@
   font-size:clamp(74px,17vw,250px); color:#fff;
 }
 .scb-tagline{ margin:18px 0 0; font-family:var(--mono-font); font-size:13px; letter-spacing:2px; color:var(--paper); }
-/* Accesos directos a los otros sitios del web */
-.scb-herolinks{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:26px; }
-.scb-herolink{
-  display:flex; align-items:center; gap:10px; padding:13px 20px; text-decoration:none;
-  background:var(--crimson); color:#fff; border:3px solid var(--paper);
-  transition:transform .16s ease, background .16s ease;
+/* Accesos directos a los otros sitios. Son lo único que se puede pulsar en
+   la portada, así que están hechos para que canten: bloque hueso, sombra
+   dura desplazada y un cuadro de color para el icono. Al pasar por encima
+   la ficha se levanta hacia la sombra y la flecha se despega. */
+.scb-herolinks{
+  display:flex; flex-wrap:wrap; gap:18px; justify-content:center; margin-top:34px;
 }
-.scb-herolink b{ font-family:var(--display-font); font-size:15px; letter-spacing:.5px; }
-.scb-herolink em{ font-family:var(--mono-font); font-style:normal; font-size:10px; letter-spacing:1px; opacity:.85; }
-.scb-herolink span{ font-family:var(--mono-font); font-size:14px; }
-.scb-herolink:hover{ background:var(--ink); border-color:var(--crimson-hi); transform:translate(-2px,-3px); }
+.scb-herolink{
+  --shadow:var(--ink);
+  position:relative; display:flex; align-items:center; gap:14px;
+  padding:14px 22px 14px 14px; text-decoration:none;
+  background:var(--paper); color:var(--ink); border:3px solid var(--ink);
+  box-shadow:7px 7px 0 var(--shadow);
+  transition:transform .16s ease, box-shadow .16s ease, background .16s ease, color .16s ease;
+}
+.scb-herolink-icon{
+  display:grid; place-items:center; width:42px; height:42px; flex:none;
+  background:var(--crimson); color:#fff; border:3px solid var(--ink);
+  transition:background .16s ease;
+}
+.scb-herolink-text{ display:grid; gap:2px; text-align:left; }
+.scb-herolink b{
+  font-family:var(--display-font); font-size:20px; line-height:1; letter-spacing:.5px;
+}
+.scb-herolink em{
+  font-family:var(--mono-font); font-style:normal; font-size:10px; letter-spacing:1.4px;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.scb-herolink-go{
+  font-family:var(--mono-font); font-size:20px; line-height:1; margin-left:6px;
+  transition:transform .16s ease;
+}
+.scb-herolink:hover, .scb-herolink:focus-visible{
+  transform:translate(4px,4px); box-shadow:3px 3px 0 var(--shadow);
+  background:var(--crimson); color:#fff;
+}
+.scb-herolink:hover em, .scb-herolink:focus-visible em{ color:rgba(255,255,255,.85); }
+.scb-herolink:hover .scb-herolink-icon,
+.scb-herolink:focus-visible .scb-herolink-icon{ background:var(--ink); }
+.scb-herolink:hover .scb-herolink-go,
+.scb-herolink:focus-visible .scb-herolink-go{ transform:translateX(5px); }
 .scb-pin{ position:absolute; width:16px; height:16px; border-radius:50%; background:var(--crimson-hi);
   border:3px solid var(--ink); z-index:4; }
 .scb-pin.p1{ top:22px; left:6%; } .scb-pin.p2{ top:30px; right:7%; }
-
-/* ---------- CINTAS INCLINADAS tipo "no pase" ---------- */
-.scb-tapezone{
-  position:relative; z-index:2; height:380px; overflow:hidden; pointer-events:none;
-}
-.scb-tape{
-  position:absolute; left:-38%; width:176%; height:52px;
-  border-top:4px solid var(--ink); border-bottom:4px solid var(--ink);
-}
-/* Negra y hueso: las dos contrastan contra el rojo del fondo de estrellas */
-.scb-tape.t1{ top:30%; transform:rotate(-30deg); background:var(--ink); border-color:var(--crimson); }
-.scb-tape.t2{ top:56%; transform:rotate(31deg); background:var(--paper); }
 
 /* ---------- STATEMENT ---------- */
 .scb-statement{
@@ -152,30 +170,48 @@
 .scb-sectionhead.on-dark .scb-sectionnote{ color:var(--paper-dim); }
 .scb-sectionhead.on-dark h3{ color:#fff; }
 
-/* ---------- ENTRADAS RECIENTES ---------- */
+/* ---------- ÚLTIMAS PUBLICACIONES ---------- */
+/* Fichas de billete troquelado, a propósito distintas de los marcos Y2K
+   del resto: talón numerado en vertical, línea de perforado y el hueco
+   vacío a la derecha. Mientras no haya entradas, eso es todo lo que hay. */
 .scb-posts{ z-index:2; color:var(--ink); padding:82px 20px 96px; }
-.scb-postgrid{ max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:26px; }
-.scb-postcard{
-  color:var(--ink); min-height:180px; cursor:default; transition:transform .18s ease;
+.scb-postgrid{ max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+.scb-ticket{
+  position:relative; display:flex; align-items:stretch; min-height:104px;
+  background:var(--paper); border:3px solid var(--ink); overflow:hidden;
 }
-.scb-postcard:hover{ transform:translate(-4px,-5px) rotate(0deg) !important; }
-.scb-postcard .cat{ display:inline-block; font-family:var(--mono-font); font-size:9px; font-weight:700;
-  letter-spacing:1.5px; padding:4px 8px; background:var(--crimson); color:#fff; }
-.scb-postcard h4{ margin:12px 0 6px; font-family:var(--display-font); font-size:17px; line-height:1.2; letter-spacing:-.4px; }
-.scb-postcard .date{ font-family:var(--mono-font); font-size:11px; color:var(--ink-3); }
-.scb-postcard .go{ position:absolute; bottom:14px; left:16px; font-family:var(--mono-font);
-  font-size:11px; font-weight:700; letter-spacing:1px; color:var(--crimson); }
-/* variante de marco oscuro */
-.scb-postcard.dark{ color:var(--paper); }
-.scb-postcard.dark .date{ color:var(--paper-dim); }
-.scb-postcard.dark .go{ color:var(--crimson-hi); }
-.scb-postcard.dark .cat{ background:var(--crimson-hi); color:var(--ink); }
+.scb-ticket-stub{
+  display:grid; place-items:center; width:58px; flex:none;
+  background:var(--ink); color:var(--paper);
+  font-family:var(--display-font); font-size:24px; line-height:1;
+  writing-mode:vertical-rl; transform:rotate(180deg); letter-spacing:2px;
+}
+/* El perforado: puntos repetidos en vez de un borde discontinuo, para que
+   se lea como troquel y no como caja punteada. */
+.scb-ticket-perf{
+  width:3px; flex:none; margin:10px 0;
+  background:repeating-linear-gradient(to bottom,
+    var(--ink) 0 6px, transparent 6px 12px);
+}
+.scb-ticket-body{
+  flex:1; display:grid; place-items:center; padding:20px 16px;
+  font-family:var(--display-font); font-size:clamp(17px,2.4vw,24px);
+  letter-spacing:2px; color:var(--ink-3);
+}
+/* La franja roja del borde inferior aparece al pasar: sin enlace todavía,
+   solo confirma que la ficha está viva. */
+.scb-ticket::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:5px;
+  background:var(--crimson); transform:scaleX(0); transform-origin:left;
+  transition:transform .22s ease;
+}
+.scb-ticket:hover::after{ transform:scaleX(1); }
 
 /* ---------- VITRINA DE CRISTAL (blur / glassmorphism) ---------- */
 .scb-glass{ position:relative; z-index:2; padding:90px 20px; }
 .scb-glasspanel{
   position:relative; max-width:1120px; margin:0 auto; border-radius:26px; overflow:hidden;
-  display:grid; grid-template-columns:auto minmax(0,1fr); gap:22px; padding:22px;
+  display:grid; gap:22px; padding:26px;
   /* El tinte oscuro es alto a propósito: el blur no siempre se aplica (y el
      fondo de estrellas es muy movido), y el texto tiene que leerse sin
      recurrir a sombras. */
@@ -183,29 +219,33 @@
   backdrop-filter:blur(26px) saturate(160%); -webkit-backdrop-filter:blur(26px) saturate(160%);
   border:1px solid rgba(255,255,255,.34); box-shadow:0 24px 60px rgba(0,0,0,.45);
 }
-.scb-glassrail{
-  display:flex; flex-direction:column; gap:12px; padding:16px 12px; border-radius:20px;
-  background:linear-gradient(160deg,rgba(255,255,255,.18),rgba(255,255,255,.04));
-  border:1px solid rgba(255,255,255,.28);
+.scb-glasshead{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;
+  padding-bottom:18px; border-bottom:1px solid rgba(255,255,255,.22);
 }
-.scb-railbtn{
-  display:grid; place-items:center; width:38px; height:38px; border-radius:50%;
-  background:rgba(17,17,17,.5); color:#fff; border:1px solid rgba(255,255,255,.25);
+.scb-glasshead h3{
+  margin:0; font-family:var(--display-font); font-size:clamp(26px,4vw,46px);
+  color:#fff; letter-spacing:-1px;
 }
-.scb-railbtn:hover{ background:var(--crimson); }
-/* z-index:1 para que la palabra gigante de atrás no se pinte encima del texto */
-.scb-glassmain{ position:relative; z-index:1; display:grid; gap:16px; min-width:0; }
-.scb-glasshead{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:10px; }
-.scb-glasshead h3{ margin:0; font-family:var(--display-font); font-size:clamp(26px,3.6vw,42px); color:#fff; letter-spacing:-1px; }
-.scb-glasstime{ font-family:var(--mono-font); font-size:11px; letter-spacing:2px; color:#fff; }
+/* Etiqueta de estado: la sección entera está pendiente, y conviene decirlo
+   arriba en vez de repetirlo solo dentro de cada hueco. */
+.scb-glasstag{
+  font-family:var(--mono-font); font-size:10px; font-weight:700; letter-spacing:2px;
+  padding:7px 12px; border-radius:999px; color:#fff;
+  background:var(--crimson); border:1px solid rgba(255,255,255,.4);
+}
 
-.scb-slots{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-rows:132px; gap:14px; }
+.scb-slots{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-auto-rows:210px; gap:16px;
+}
 .scb-slot{
   position:relative; margin:0; border-radius:18px; overflow:hidden;
   background-color:rgba(15,15,15,.5);
   border:2px dashed rgba(255,255,255,.55);
   display:grid; place-items:center; isolation:isolate;
+  transition:border-color .18s ease, transform .18s ease;
 }
+.scb-slot:hover{ border-color:var(--crimson-hi); transform:translateY(-3px); }
 /* Tratamiento Y2K: la foto se pasa a blanco y negro con mucho contraste en
    ::before, y encima la capa .y2k-tint la tiñe en modo screen. Van separadas
    porque si compartieran elemento el filtro también apagaría el teñido. */
@@ -214,35 +254,44 @@
   background-image:var(--img,none); background-size:cover; background-position:center;
   filter:grayscale(100%) contrast(130%) brightness(110%);
 }
-.scb-slot > .scb-slotlabel, .scb-slot > .scb-slotplus{ position:relative; z-index:2; }
-.scb-slot > .scb-slotplus{ position:absolute; }
-.slot-tall{ grid-row:span 2; } .slot-wide{ grid-column:span 2; } .slot-wide3{ grid-column:span 3; }
-.scb-slotlabel{ font-family:var(--mono-font); font-size:11px; letter-spacing:2px; color:rgba(255,255,255,.85); }
-.scb-slotplus{
-  position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%;
-  display:grid; place-items:center; background:var(--crimson-hi); color:#fff;
-  font-family:var(--display-font); font-size:15px; line-height:1;
+/* La plataforma se ancla arriba a la izquierda y el aviso queda centrado:
+   así el hueco se lee incluso cuando ya tenga miniatura detrás. */
+.scb-slot-plat{
+  position:absolute; z-index:2; top:10px; left:10px;
+  display:flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px;
+  font-family:var(--mono-font); font-size:10px; font-weight:700; letter-spacing:1.5px;
+  background:rgba(10,10,10,.78); color:#fff; border:1px solid rgba(255,255,255,.3);
+}
+.scb-slot-soon{
+  position:relative; z-index:2;
+  font-family:var(--display-font); font-size:15px; letter-spacing:2px;
+  color:rgba(255,255,255,.5);
 }
 .scb-glasscard{
-  border-radius:18px; padding:16px 18px;
+  border-radius:18px; padding:18px 20px;
   background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04)),rgba(15,15,15,.66);
   border:1px solid rgba(255,255,255,.3);
 }
-.scb-glasscard b{ font-family:var(--display-font); font-size:16px; color:#fff; }
-.scb-glasscard p{ margin:8px 0 10px; font-size:13px; line-height:1.6; color:rgba(255,255,255,.86); }
-.scb-glassmeta{ font-family:var(--mono-font); font-size:10px; letter-spacing:1px; color:rgba(255,255,255,.7); }
-.scb-glassword{
-  position:absolute; right:18px; bottom:6px; z-index:0; pointer-events:none;
-  font-family:var(--display-font); font-size:clamp(60px,11vw,150px); line-height:.8;
-  color:transparent; -webkit-text-stroke:2px rgba(255,255,255,.28); letter-spacing:-2px;
+.scb-glasscard p{ margin:0 0 14px; font-size:14px; line-height:1.65; color:rgba(255,255,255,.88); max-width:62ch; }
+.scb-glassfoot{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;
 }
+.scb-glassmeta{ font-family:var(--mono-font); font-size:10px; letter-spacing:1px; color:rgba(255,255,255,.7); }
+/* Deshabilitado mientras no haya nada que leer, pero ya con su sitio hecho */
+.scb-glasscta{
+  display:inline-flex; align-items:center; gap:8px; padding:11px 20px;
+  font-family:var(--mono-font); font-size:11px; font-weight:700; letter-spacing:2px;
+  color:#fff; background:var(--crimson); border:1px solid rgba(255,255,255,.4);
+  border-radius:999px; cursor:pointer; transition:background .16s ease, transform .16s ease;
+}
+.scb-glasscta:hover:not(:disabled){ background:var(--crimson-hi); transform:translateX(3px); }
+.scb-glasscta:disabled{ opacity:.5; cursor:not-allowed; }
 
 /* ---------- HISTORIAS ---------- */
 .scb-stories{ z-index:2; padding:80px 20px 72px; }
 .scb-storylist{ max-width:780px; margin:0 auto; display:grid; gap:16px; }
 .scb-story{ display:flex; align-items:center; gap:16px; background:var(--ink); border:3px solid var(--ink-3); padding:16px 18px; }
 .scb-story:nth-child(even){ flex-direction:row-reverse; text-align:right; }
-.scb-story .pfp{ width:44px; height:44px; flex:none; border:3px solid var(--ink-3); }
 .scb-story b{ display:block; font-family:var(--mono-font); font-size:12px; letter-spacing:1px; color:var(--crimson-hi); margin-bottom:4px; }
 .scb-story p{ margin:0; font-size:13px; color:var(--paper-dim); line-height:1.55; }
 .scb-signcard{
@@ -264,20 +313,6 @@
 .tile.tone-paper{ background:var(--paper); color:var(--ink); }
 .tile.tone-ink{ background:var(--ink-2); color:var(--crimson-hi); }
 
-/* ---------- SÍGUEME ---------- */
-.scb-social{ z-index:2; padding:80px 20px 92px; }
-.scb-sociallist{ max-width:780px; margin:0 auto; display:grid; gap:12px; }
-.scb-sociallink{
-  display:flex; align-items:center; gap:14px; padding:16px 18px;
-  background:var(--ink); border:3px solid var(--ink-3); color:var(--paper); text-decoration:none;
-  font-family:var(--display-font); font-size:15px; letter-spacing:.5px; text-transform:uppercase;
-}
-.scb-sociallink em{ font-family:var(--mono-font); font-style:normal; font-size:11px; color:var(--paper-dim); }
-.scb-sociallink:not(.soon):hover{ background:var(--crimson); border-color:var(--crimson); color:#fff; }
-.scb-sociallink.soon{ border-style:dashed; }
-.scb-sociallink i{ margin-left:auto; font-family:var(--mono-font); font-style:normal; font-size:10px;
-  letter-spacing:1px; color:var(--crimson-hi); }
-
 /* ---------- FOOTER ---------- */
 .scb-footer{ position:relative; z-index:2; background:var(--ink); border-top:5px solid var(--crimson); padding:36px 20px 30px; text-align:center; }
 .scb-footerword{ font-family:var(--display-font); font-size:clamp(48px,16vw,180px); line-height:.85; color:#fff; letter-spacing:-4px; }
@@ -294,14 +329,12 @@
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width:900px){
-  .scb-postgrid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   .scb-gallerygrid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
   .scb-about{ grid-template-columns:minmax(0,1fr); }
   .scb-about-photo{ width:180px; margin:0 auto; }
   .scb-heropanel{ padding:52px 26px; }
-  .scb-glasspanel{ grid-template-columns:minmax(0,1fr); }
-  .scb-glassrail{ flex-direction:row; justify-content:center; }
-  .scb-tapezone{ height:300px; }
+  .scb-slots{ grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:190px; }
+  .scb-glasspanel{ padding:20px; }
 }
 @media (max-width:640px){
   .scb{ font-size:14px; }
@@ -309,24 +342,35 @@
   .scb-hamburger b{ display:none; }
   .scb-heropanel{ min-height:70vh; padding:44px 18px; }
   .scb-title{ -webkit-text-stroke-width:2px; }
-  .scb-postgrid{ grid-template-columns:minmax(0,1fr); }
   .scb-gallerygrid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   .scb-signgrid{ grid-template-columns:minmax(0,1fr); }
   .scb-story, .scb-story:nth-child(even){ flex-direction:row; text-align:left; }
   .scb-statement{ padding:70px 18px; }
   .scb-sticker.boom{ font-size:36px; }
-  .scb-tapezone{ height:240px; }
-  .scb-tape span{ font-size:14px; }
-  .scb-slots{ grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:112px; }
-  .slot-tall{ grid-row:span 1; } .slot-wide, .slot-wide3{ grid-column:span 2; }
-  .scb-glassword{ font-size:56px; right:10px; }
   .scb-globe.g3{ display:none; }
+
+  /* Los dos accesos pasan a ocupar el ancho: en el móvil son el objetivo
+     principal y no deben quedarse en dos botones pequeños centrados. */
+  .scb-herolinks{ flex-direction:column; align-items:stretch; gap:14px; margin-top:28px; }
+  .scb-herolink{ box-shadow:5px 5px 0 var(--shadow); }
+  .scb-herolink:hover, .scb-herolink:focus-visible{
+    transform:translate(3px,3px); box-shadow:2px 2px 0 var(--shadow);
+  }
+  .scb-herolink-go{ margin-left:auto; }
+
+  /* Un billete por fila: partido en dos quedaba con el talón más ancho que
+     el hueco y no se leía. */
+  .scb-postgrid{ grid-template-columns:minmax(0,1fr); gap:16px; }
+  .scb-ticket{ min-height:88px; }
+  .scb-ticket-stub{ width:46px; font-size:19px; }
+
+  .scb-slots{ grid-template-columns:minmax(0,1fr); grid-auto-rows:170px; }
+  .scb-glasshead h3{ font-size:26px; }
+  .scb-glasscta{ width:100%; justify-content:center; }
+  .scb-glassfoot{ flex-direction:column; align-items:flex-start; }
 }
 @media (prefers-reduced-motion:reduce){
   .scb *,.scb *::before,.scb *::after{
     animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;
   }
-  /* Sin marquesina el texto de la cinta quedaría fuera de cuadro para siempre:
-     se planta al inicio y se lee quieto. */
-  .scb-tape span{ padding-left:0; animation:none !important; }
 }
