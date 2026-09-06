@@ -1,7 +1,7 @@
 /* Widget de la ruleta para el Browser Source de OBS.
    Fondo transparente: OBS compone esto sobre la transmisión. */
 
-.ruleta-ov{
+.ov-ruleta{
   position:fixed; inset:0; overflow:hidden;
   background:transparent;
   pointer-events:none; /* el widget no roba clics en la escena */
@@ -11,7 +11,7 @@
    arriba del todo; al entrar baja a su sitio y al terminar vuelve por el
    mismo camino. La curva de salida es la de entrada al revés, para que el
    viaje se lea igual en los dos sentidos. */
-.ruleta-ov-carro{
+.ov-carro{
   position:absolute; top:0; left:50%;
   width:min(46vw, 520px);
   padding-top:2vh;
@@ -19,27 +19,27 @@
   transition:transform .75s cubic-bezier(.34,1.32,.5,1);
   will-change:transform;
 }
-.ruleta-ov-carro.dentro{
+.ov-carro.dentro{
   transform:translate(-50%, 0);
 }
 
 /* Aviso de estado, arriba a la izquierda. No debería salir en directo:
-   añade ?silencioso=1 a la URL del widget para esconderlo. */
-.ruleta-ov-estado{
+   añade &silencioso=1 a la URL del widget para esconderlo. */
+.ov-estado{
   position:absolute; top:8px; left:8px;
   padding:5px 10px; border-radius:6px;
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px;
   letter-spacing:.05em; color:#d9d5c5; background:rgba(0,0,0,.72);
   border:1px solid rgba(217,213,197,.25);
 }
-.ruleta-ov-estado.est-suscrito{ color:#7ee787; border-color:rgba(126,231,135,.4); }
-.ruleta-ov-estado.est-error{ color:#ff6b81; border-color:rgba(255,107,129,.45); }
-.ruleta-ov-estado.est-reconectando{ color:#ffcf00; border-color:rgba(255,207,0,.4); }
+.ov-estado.est-suscrito{ color:#7ee787; border-color:rgba(126,231,135,.4); }
+.ov-estado.est-error{ color:#ff6b81; border-color:rgba(255,107,129,.45); }
+.ov-estado.est-reconectando{ color:#ffcf00; border-color:rgba(255,207,0,.4); }
 
 @media (max-width:900px){
-  .ruleta-ov-carro{ width:min(72vw, 420px); }
+  .ov-carro{ width:min(72vw, 420px); }
 }
 
 @media (prefers-reduced-motion:reduce){
-  .ruleta-ov-carro{ transition-duration:.001ms; }
+  .ov-carro{ transition-duration:.001ms; }
 }
