@@ -35,12 +35,18 @@ export const env = {
   produccion: process.env.NODE_ENV === 'production',
 }
 
+// Antes esto hacía process.exit(1). Mal: una variable mal puesta tiraba el
+// sitio entero y el hosting devolvía un 503 sin explicar nada. Ahora el
+// servidor arranca igual, el blog se sigue viendo, y es /api quien avisa de
+// lo que falta, tanto en el registro como al abrirlo en el navegador.
+export const configIncompleta = faltantes
+
 if (faltantes.length) {
   console.error(
-    `\nFaltan variables de entorno: ${faltantes.join(', ')}\n` +
-    `Ponlas en el panel de Node.js de Hostinger o en un archivo .env.\n`,
+    `\n[config] Faltan variables de entorno: ${faltantes.join(', ')}\n` +
+    `[config] El sitio se sirve igual, pero /api no funcionará hasta ponerlas.\n` +
+    `[config] Se ponen en Hostinger: Sitios web > hayfel.com > Variables de entorno.\n`,
   )
-  process.exit(1)
 }
 
 export const REDIRECT_URI = `${env.publicUrl}/api/auth/callback`
