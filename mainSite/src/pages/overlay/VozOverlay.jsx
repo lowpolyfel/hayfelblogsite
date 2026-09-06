@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useLector } from '../../features/voz/useLector'
 import { useTwitchEventSub } from '../../services/api/twitch/useTwitchEventSub'
 import { bandera, useWidget } from './useWidget'
@@ -32,8 +32,14 @@ export function VozOverlay() {
   })
 
   // Prueba sin gastar puntos: &demo=1 en el enlace.
+  //
+  // Una sola vez por carga. El efecto depende de `cfg`, y `cfg` se renueva
+  // cada vez que se pide token fresco: sin este cerrojo, cada renovación
+  // volvía a soltar la frase de prueba, y en OBS sonaba en bucle.
+  const demoHecha = useRef(false)
   useEffect(() => {
-    if (!cfg || !bandera('demo')) return
+    if (!cfg || !bandera('demo') || demoHecha.current) return
+    demoHecha.current = true
     const t = setTimeout(
       () => lector.encolar({ usuario: 'Alguien', texto: 'Prueba del lector de voz del canal.' }),
       800,
@@ -59,6 +65,10 @@ export function VozOverlay() {
 
   return (
     <div className="ov-voz">
+      {/* Si esto aparece encima del directo es que la URL pegada en OBS
+          lleva &demo=1. Se avisa a gritos en vez de dejar que se note solo
+          porque algo habla sin que nadie canjee nada. */}
+      {bandera('demo') && <div className="ov-demo">MODO PRUEBA · quita &demo=1 de la URL de OBS</div>}
       <div className={`ov-estado est-${tono}`}>voz · {leyenda}</div>
 
       {/* Este panel no sale en el directo si se añade &silencioso=1. Está
