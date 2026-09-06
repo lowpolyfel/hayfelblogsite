@@ -43,3 +43,31 @@
 @media (prefers-reduced-motion:reduce){
   .ov-carro{ transition-duration:.001ms; }
 }
+
+/* ---------- widget del lector de voz ---------- */
+/* No dibuja nada en la escena: solo suena. Lo que se ve aquí es para poder
+   comprobarlo en el navegador, y se esconde con &silencioso=1. */
+.ov-voz{
+  position:fixed; inset:0; overflow:hidden; background:transparent;
+  pointer-events:none; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.ov-nota{
+  position:absolute; top:36px; left:8px; max-width:min(460px, 70vw);
+  padding:10px 12px; border-radius:6px; font-size:11px; line-height:1.5;
+  color:#ffe9a8; background:rgba(0,0,0,.82); border:1px solid rgba(255,207,0,.5);
+}
+.ov-hablando{
+  position:absolute; left:8px; bottom:8px; max-width:min(620px, 80vw);
+  display:grid; gap:3px; padding:10px 14px; border-radius:8px;
+  background:rgba(0,0,0,.82); border:1px solid rgba(217,213,197,.3);
+}
+.ov-hablando b{ font-size:11px; letter-spacing:.08em; color:#ff2d4d; }
+.ov-hablando span{ font-size:14px; color:#f3f0e6; line-height:1.4; }
+.ov-historial{
+  position:absolute; right:8px; bottom:8px; max-width:min(420px, 45vw);
+  margin:0; padding:8px 12px; list-style:none; border-radius:6px;
+  background:rgba(0,0,0,.6); border:1px solid rgba(217,213,197,.16);
+  font-size:10px; line-height:1.6; color:rgba(217,213,197,.75);
+}
+.ov-historial b{ color:#ff2d4d; }
+.ov-historial .fuera{ color:rgba(255,107,129,.75); text-decoration:line-through; }

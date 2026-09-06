@@ -71,10 +71,12 @@ export async function guardarRefreshToken(twitchUserId, refreshToken) {
   })
 }
 
-export async function guardarConfig(twitchUserId, { rewardId, premios }) {
+export async function guardarConfig(twitchUserId, { rewardId, premios, rewardTtsId, ttsAjustes }) {
   const cambios = {}
   if (rewardId !== undefined) cambios.reward_id = rewardId || null
   if (premios !== undefined) cambios.premios = premios
+  if (rewardTtsId !== undefined) cambios.reward_tts_id = rewardTtsId || null
+  if (ttsAjustes !== undefined) cambios.tts_ajustes = ttsAjustes
   if (!Object.keys(cambios).length) return buscarPorId(twitchUserId)
 
   const filas = await pedir(`${base}?twitch_user_id=eq.${encodeURIComponent(twitchUserId)}`, {

@@ -2,13 +2,23 @@
 // iniciar sesión ni para leer recompensas: de eso se encarga el servidor,
 // que es el único que conoce el Client Secret y guarda el refresh token.
 
+export interface AjustesVoz {
+  voz: string
+  velocidad: number
+  tono: number
+  volumen: number
+  maxCaracteres: number
+  leerNombre: boolean
+  colapsarRepetidos: boolean
+  bloqueadas: string[]
+}
+
 export interface Sesion {
   sesion: boolean
   login?: string
   displayName?: string
-  rewardId?: string | null
-  premios?: string[]
-  widgetUrl?: string
+  ruleta?: { rewardId: string | null; premios: string[]; widgetUrl: string }
+  voz?: { rewardId: string | null; ajustes: AjustesVoz; widgetUrl: string }
 }
 
 export interface Recompensa {
@@ -22,8 +32,8 @@ export interface ConfigDelWidget {
   accessToken: string
   clientId: string
   broadcasterId: string
-  rewardId: string | null
-  premios: string[]
+  ruleta: { rewardId: string | null; premios: string[] }
+  voz: { rewardId: string | null; ajustes: AjustesVoz }
   revalidarEnSegundos: number
 }
 
@@ -55,16 +65,24 @@ export const salir = () => pedir<{ ok: true }>('/auth/logout', { method: 'POST' 
 export const listarRecompensas = () =>
   pedir<{ recompensas: Recompensa[] }>('/rewards').then((r) => r.recompensas)
 
-export const guardarConfig = (cambios: { rewardId?: string | null; premios?: string[] }) =>
-  pedir<{ rewardId: string | null; premios: string[] }>('/config', {
+export interface CambiosConfig {
+  rewardId?: string | null
+  premios?: string[]
+  rewardTtsId?: string | null
+  ttsAjustes?: Partial<AjustesVoz>
+}
+
+export const guardarConfig = (cambios: CambiosConfig) =>
+  pedir<{ ruleta: { rewardId: string | null; premios: string[] }
+          voz: { rewardId: string | null; ajustes: AjustesVoz } }>('/config', {
     method: 'PUT',
     body: JSON.stringify(cambios),
   })
 
 export const rotarWidget = () =>
-  pedir<{ widgetUrl: string }>('/widget-key/rotar', { method: 'POST' })
+  pedir<{ ruletaUrl: string; vozUrl: string }>('/widget-key/rotar', { method: 'POST' })
 
-/** Lo que pide el widget de OBS. Sin cookies: se identifica por su clave. */
+/** Lo que piden los widgets de OBS. Sin cookies: se identifican por su clave. */
 export const configDelWidget = (clave: string) =>
   pedir<ConfigDelWidget>(`/widget/${encodeURIComponent(clave)}`)
 

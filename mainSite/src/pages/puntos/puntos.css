@@ -110,3 +110,46 @@
   .rp-premios{ grid-template-columns:minmax(0,1fr); }
   .rp-acciones .rp-btn{ flex:1 1 auto; justify-content:center; }
 }
+
+/* ---------- pestañas del panel ---------- */
+.rp-pestanas{
+  display:flex; gap:2px; padding:0 20px; max-width:760px; margin:0 auto;
+  border-bottom:2px solid var(--ink-3);
+}
+.rp-pestanas a{
+  padding:13px 18px; text-decoration:none; border-bottom:3px solid transparent;
+  font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:1.5px;
+  color:var(--paper-dim); margin-bottom:-2px;
+}
+.rp-pestanas a:hover{ color:var(--paper); }
+.rp-pestanas a.act{ color:#fff; border-bottom-color:var(--crimson); }
+
+/* ---------- una función del panel ---------- */
+.rp-funcion{
+  display:grid; gap:12px; padding:20px;
+  background:var(--ink-2); border:3px solid var(--ink-3);
+}
+.rp-funcion-cab{ display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start; justify-content:space-between; }
+.rp-funcion-cab h2{ margin:0 0 4px; font-size:19px; color:#fff; letter-spacing:-.3px; }
+
+/* ---------- bloque de ajustes ---------- */
+.rp-bloque{
+  display:grid; gap:14px; padding:20px;
+  background:var(--ink-2); border:3px solid var(--ink-3);
+}
+.rp-bloque h2{ margin:0; font-size:19px; color:#fff; letter-spacing:-.3px; }
+
+.rp-area{ resize:vertical; min-height:90px; line-height:1.5; }
+
+.rp-check{ display:flex; align-items:center; gap:10px; font-size:13px; color:var(--paper-dim); cursor:pointer; }
+.rp-check input{ accent-color:var(--crimson-hi); width:17px; height:17px; flex:none; }
+.rp-check code{ font-family:var(--mono); font-size:12px; color:var(--paper); }
+
+/* Deslizador con su valor a la vista: sin el número no se sabe dónde estás */
+.rp-desliza{ display:grid; gap:6px; }
+.rp-desliza span{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:var(--mono); font-size:10px; letter-spacing:1.5px; color:var(--paper-dim);
+}
+.rp-desliza b{ color:var(--crimson-hi); font-size:13px; }
+.rp-desliza input{ width:100%; accent-color:var(--crimson-hi); }

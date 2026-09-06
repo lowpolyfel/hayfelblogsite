@@ -1,57 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import RuletaDeGemas from '../../features/ruleta/RuletaDeGemas'
 import { premiosPorDefecto } from '../../features/ruleta/gemas'
-import { configDelWidget } from '../../services/api/ruleta'
 import { useTwitchEventSub } from '../../services/api/twitch/useTwitchEventSub'
+import { bandera, useWidget } from './useWidget'
 import './overlay.css'
 
 // Tiempo que tarda la ruleta en bajar. Coincide con la transición del CSS.
 const ENTRADA_MS = 750
 
 /**
- * Página 4 de 4: el widget del Browser Source de OBS. Fondo transparente.
+ * Widget de la ruleta para el Browser Source de OBS. Fondo transparente.
  *
  * Se identifica con la clave de la URL (?k=...), pide su configuración al
  * backend y recibe un token de Twitch recién hecho. Antes de que ese token
  * caduque vuelve a pedirlo solo, sin recargar nada: por eso el enlace se
  * pega una vez en OBS y no se toca nunca más.
  */
-export function OverlayPage() {
-  const clave = new URLSearchParams(window.location.search).get('k') || ''
+export function RuletaOverlay() {
+  const { cfg, fallo } = useWidget()
 
-  const [cfg, setCfg] = useState(null)
-  const [fallo, setFallo] = useState('')
   const timers = useRef([])
   const apuntar = (id) => { timers.current.push(id); return id }
   useEffect(() => () => { timers.current.forEach(clearTimeout); timers.current = [] }, [])
-
-  // Config y token, renovados antes de que caduquen.
-  useEffect(() => {
-    if (!clave) { setFallo('Falta la clave del widget en la URL'); return }
-    let vivo = true
-    let reloj
-
-    const traer = async () => {
-      try {
-        const c = await configDelWidget(clave)
-        if (!vivo) return
-        setCfg(c)
-        setFallo('')
-        reloj = setTimeout(traer, Math.max(60, c.revalidarEnSegundos) * 1000)
-      } catch (e) {
-        if (!vivo) return
-        setFallo(e?.status === 404
-          ? 'Widget desconocido: el enlace cambió. Copia el nuevo desde los ajustes.'
-          : e?.status === 409
-            ? 'Hay que volver a entrar con Twitch en el panel.'
-            : 'Sin conexión con el servidor. Reintentando…')
-        // Reintento tranquilo: si el servidor está caído, ya volverá.
-        reloj = setTimeout(traer, 30000)
-      }
-    }
-    traer()
-    return () => { vivo = false; clearTimeout(reloj) }
-  }, [clave])
 
   /* ---------- entrada, giro y salida ---------- */
   const [visible, setVisible] = useState(false)
@@ -79,18 +49,18 @@ export function OverlayPage() {
     token: cfg?.accessToken ?? '',
     clientId: cfg?.clientId ?? '',
     broadcasterId: cfg?.broadcasterId ?? '',
-    rewardId: cfg?.rewardId ?? '',
+    rewardId: cfg?.ruleta?.rewardId ?? '',
     onCanje: alCanjear,
   })
 
   // Prueba sin gastar puntos: añade &demo=1 al enlace.
   useEffect(() => {
-    if (!cfg || !new URLSearchParams(window.location.search).has('demo')) return
+    if (!cfg || !bandera('demo')) return
     const t = setTimeout(alCanjear, 600)
     return () => clearTimeout(t)
   }, [cfg, alCanjear])
 
-  const silencioso = new URLSearchParams(window.location.search).has('silencioso')
+  const silencioso = bandera('silencioso')
   const leyenda = fallo || error || {
     inactivo: 'esperando configuración…',
     conectando: 'conectando con Twitch…',
@@ -105,7 +75,7 @@ export function OverlayPage() {
       <div className={`ov-carro ${visible ? 'dentro' : ''}`}>
         <RuletaDeGemas
           girarSignal={girarSignal}
-          premios={cfg?.premios?.length === 8 ? cfg.premios : premiosPorDefecto()}
+          premios={cfg?.ruleta?.premios?.length === 8 ? cfg.ruleta.premios : premiosPorDefecto()}
           onTerminar={alTerminar}
         />
       </div>
