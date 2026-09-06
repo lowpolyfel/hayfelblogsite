@@ -31,8 +31,17 @@ function escribir(clave: string, valor: string) {
 }
 
 export const almacen = {
-  get clientId() { return leer(K.clientId) },
-  set clientId(v: string) { escribir(K.clientId, v) },
+  // Marca de "hay un login en curso". Va en sessionStorage, no en local:
+  // muere con la pestaña, que es justo lo que queremos.
+  get volviendoDeLogin(): boolean {
+    try { return window.sessionStorage.getItem('hayfel.twitch.login') === '1' } catch { return false }
+  },
+  set volviendoDeLogin(v: boolean) {
+    try {
+      if (v) window.sessionStorage.setItem('hayfel.twitch.login', '1')
+      else window.sessionStorage.removeItem('hayfel.twitch.login')
+    } catch { /* sin almacenamiento */ }
+  },
 
   get token() { return leer(K.token) },
   set token(v: string) { escribir(K.token, v) },
@@ -72,7 +81,6 @@ export function adoptarConfigDeUrl(): boolean {
   let encontrado = false
 
   const par: Array<[string, (v: string) => void]> = [
-    [PARAM.clientId, (v) => { almacen.clientId = v }],
     [PARAM.token, (v) => { almacen.token = v }],
     [PARAM.broadcasterId, (v) => { almacen.broadcasterId = v }],
     [PARAM.rewardId, (v) => { almacen.rewardId = v }],
@@ -97,7 +105,6 @@ export function adoptarConfigDeUrl(): boolean {
 // Arma el enlace que se pega en el Browser Source de OBS.
 export function urlDelWidget(premios: Premios): string {
   const q = new URLSearchParams()
-  q.set(PARAM.clientId, almacen.clientId)
   q.set(PARAM.token, almacen.token)
   q.set(PARAM.broadcasterId, almacen.broadcasterId)
   q.set(PARAM.rewardId, almacen.rewardId)

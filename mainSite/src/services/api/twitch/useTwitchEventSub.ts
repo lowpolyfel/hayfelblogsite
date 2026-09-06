@@ -14,7 +14,6 @@ export interface Canje {
 
 interface Opciones {
   token: string
-  clientId: string
   broadcasterId: string
   /** Solo se avisa de los canjes de esta recompensa. Vacío = todas. */
   rewardId?: string
@@ -34,7 +33,7 @@ const RECONEXION_MAX = 30000
  * `session_reconnect` cuando quiere mover la conexión: ese caso se atiende
  * conectando a la URL que indica sin rehacer la suscripción.
  */
-export function useTwitchEventSub({ token, clientId, broadcasterId, rewardId, onCanje }: Opciones) {
+export function useTwitchEventSub({ token, broadcasterId, rewardId, onCanje }: Opciones) {
   const [estado, setEstado] = useState<EstadoEventSub>('inactivo')
   const [error, setError] = useState('')
 
@@ -75,7 +74,7 @@ export function useTwitchEventSub({ token, clientId, broadcasterId, rewardId, on
         // POST daría 409 y dejaría el estado en error sin motivo.
         if (esReconexion) { setEstado('suscrito'); reintentoRef.current = 0; return }
         try {
-          await suscribirARedenciones(token, clientId, broadcasterId, sessionId)
+          await suscribirARedenciones(token, broadcasterId, sessionId)
           setEstado('suscrito')
           setError('')
           reintentoRef.current = 0
@@ -135,10 +134,10 @@ export function useTwitchEventSub({ token, clientId, broadcasterId, rewardId, on
       setEstado('reconectando')
       timerRef.current = window.setTimeout(() => conectar(EVENTSUB_WS, false), espera + Math.random() * 500)
     }
-  }, [token, clientId, broadcasterId])
+  }, [token, broadcasterId])
 
   useEffect(() => {
-    if (!token || !clientId || !broadcasterId) {
+    if (!token || !broadcasterId) {
       setEstado('inactivo')
       return
     }
@@ -152,7 +151,7 @@ export function useTwitchEventSub({ token, clientId, broadcasterId, rewardId, on
       wsRef.current?.close()
       wsRef.current = null
     }
-  }, [token, clientId, broadcasterId, conectar])
+  }, [token, broadcasterId, conectar])
 
   return { estado, error }
 }

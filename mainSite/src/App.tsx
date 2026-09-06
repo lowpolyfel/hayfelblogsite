@@ -37,6 +37,10 @@ export default function App() {
   // #config puede llevar cola (#config?error=...), así que se compara la
   // ruta sin los parámetros.
   const ruta = hash.split('?')[0]
+  // Red de seguridad: si por lo que sea el token de Twitch sigue en el hash
+  // al llegar aquí, esto es la vuelta del login y toca ir a los ajustes, no
+  // caer en la portada.
+  const vueltaDeTwitch = hash.includes('access_token=')
 
   // Al cambiar de página el scroll vuelve arriba: si no, se entra a #redes
   // a media altura por el scroll que traía la página anterior.
@@ -49,7 +53,7 @@ export default function App() {
   else if (ruta === '#overlays') page = <OverlaysPage variant="intro" />
   else if (ruta === '#overlays-fin') page = <OverlaysPage variant="outro" />
   else if (ruta === '#overlays/ruleta') page = <RuletaOverlayPage />
-  else if (ruta === '#config') page = <ConfigPage />
+  else if (ruta === '#config' || vueltaDeTwitch) page = <ConfigPage />
   else if (ruta === '#waves') page = <WavesPage />
   else if (ruta === '#waves-2') page = <WavesLegacyPage />
   else page = <ScrapbookPage />

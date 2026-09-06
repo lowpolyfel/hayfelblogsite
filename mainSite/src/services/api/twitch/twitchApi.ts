@@ -1,4 +1,4 @@
-import { EVENT_REDENCION, TWITCH_HELIX } from './twitchConfig'
+import { CLIENT_ID, EVENT_REDENCION, TWITCH_HELIX } from './twitchConfig'
 
 export interface Recompensa {
   id: string
@@ -24,12 +24,12 @@ export class ErrorTwitch extends Error {
   }
 }
 
-async function helix<T>(ruta: string, token: string, clientId: string, init?: RequestInit): Promise<T> {
+async function helix<T>(ruta: string, token: string, init?: RequestInit): Promise<T> {
   const r = await fetch(`${TWITCH_HELIX}${ruta}`, {
     ...init,
     headers: {
       Authorization: `Bearer ${token}`,
-      'Client-Id': clientId,
+      'Client-Id': CLIENT_ID,
       'Content-Type': 'application/json',
       ...init?.headers,
     },
@@ -47,8 +47,8 @@ async function helix<T>(ruta: string, token: string, clientId: string, init?: Re
 
 // Quién es el dueño del token. De aquí sale el broadcaster_id, así no hay
 // que pedirle al usuario que lo busque a mano.
-export async function obtenerUsuario(token: string, clientId: string): Promise<Usuario> {
-  const r = await helix<{ data: Usuario[] }>('/users', token, clientId)
+export async function obtenerUsuario(token: string): Promise<Usuario> {
+  const r = await helix<{ data: Usuario[] }>('/users', token)
   const u = r.data?.[0]
   if (!u) throw new ErrorTwitch(404, 'El token no corresponde a ningún usuario')
   return u
@@ -57,11 +57,11 @@ export async function obtenerUsuario(token: string, clientId: string): Promise<U
 // Devuelve todas las recompensas de puntos del canal, no solo las creadas
 // por esta aplicación (only_manageable_rewards se queda en false).
 export async function obtenerRecompensas(
-  token: string, clientId: string, broadcasterId: string,
+  token: string, broadcasterId: string,
 ): Promise<Recompensa[]> {
   const r = await helix<{ data: Recompensa[] }>(
     `/channel_points/custom_rewards?broadcaster_id=${encodeURIComponent(broadcasterId)}`,
-    token, clientId,
+    token,
   )
   return r.data ?? []
 }
@@ -70,9 +70,9 @@ export async function obtenerRecompensas(
 // en la condición a propósito: así cambiar de recompensa en los ajustes no
 // obliga a rehacer la suscripción, y el filtro se hace al recibir.
 export async function suscribirARedenciones(
-  token: string, clientId: string, broadcasterId: string, sessionId: string,
+  token: string, broadcasterId: string, sessionId: string,
 ): Promise<void> {
-  await helix('/eventsub/subscriptions', token, clientId, {
+  await helix('/eventsub/subscriptions', token, {
     method: 'POST',
     body: JSON.stringify({
       type: EVENT_REDENCION,
