@@ -1,6 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { EVENTSUB_WS, EVENT_REDENCION } from './twitchConfig'
-import { suscribirARedenciones } from './twitchApi'
+const EVENTSUB_WS = 'wss://eventsub.wss.twitch.tv/ws'
+const EVENT_REDENCION = 'channel.channel_points_custom_reward_redemption.add'
+
+// Suscripción por transporte WebSocket. El token lo sirve nuestro backend,
+// recién refrescado, así que aquí no hay nada que renovar.
+async function suscribirARedenciones(
+  token: string, clientId: string, broadcasterId: string, sessionId: string,
+): Promise<void> {
+  const r = await fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Client-Id': clientId,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: EVENT_REDENCION,
+      version: '1',
+      condition: { broadcaster_user_id: broadcasterId },
+      transport: { method: 'websocket', session_id: sessionId },
+    }),
+  })
+  if (!r.ok) {
+    const cuerpo: any = await r.json().catch(() => ({}))
+    const e: any = new Error(cuerpo?.message || `Twitch respondió ${r.status}`)
+    e.status = r.status
+    throw e
+  }
+}
 
 export type EstadoEventSub = 'inactivo' | 'conectando' | 'suscrito' | 'reconectando' | 'error'
 
@@ -14,6 +41,7 @@ export interface Canje {
 
 interface Opciones {
   token: string
+  clientId: string
   broadcasterId: string
   /** Solo se avisa de los canjes de esta recompensa. Vacío = todas. */
   rewardId?: string
@@ -33,7 +61,7 @@ const RECONEXION_MAX = 30000
  * `session_reconnect` cuando quiere mover la conexión: ese caso se atiende
  * conectando a la URL que indica sin rehacer la suscripción.
  */
-export function useTwitchEventSub({ token, broadcasterId, rewardId, onCanje }: Opciones) {
+export function useTwitchEventSub({ token, clientId, broadcasterId, rewardId, onCanje }: Opciones) {
   const [estado, setEstado] = useState<EstadoEventSub>('inactivo')
   const [error, setError] = useState('')
 
@@ -74,14 +102,14 @@ export function useTwitchEventSub({ token, broadcasterId, rewardId, onCanje }: O
         // POST daría 409 y dejaría el estado en error sin motivo.
         if (esReconexion) { setEstado('suscrito'); reintentoRef.current = 0; return }
         try {
-          await suscribirARedenciones(token, broadcasterId, sessionId)
+          await suscribirARedenciones(token, clientId, broadcasterId, sessionId)
           setEstado('suscrito')
           setError('')
           reintentoRef.current = 0
         } catch (e: any) {
           setEstado('error')
           setError(e?.status === 401
-            ? 'El token caducó o no tiene el permiso channel:read:redemptions. Vuelve a iniciar sesión en los ajustes.'
+            ? 'El token no vale. Vuelve a entrar con Twitch en el panel.'
             : e?.message || 'No se pudo crear la suscripción')
           cerradoRef.current = true // sin suscripción no hay nada que reintentar
           ws.close()
@@ -134,10 +162,10 @@ export function useTwitchEventSub({ token, broadcasterId, rewardId, onCanje }: O
       setEstado('reconectando')
       timerRef.current = window.setTimeout(() => conectar(EVENTSUB_WS, false), espera + Math.random() * 500)
     }
-  }, [token, broadcasterId])
+  }, [token, clientId, broadcasterId])
 
   useEffect(() => {
-    if (!token || !broadcasterId) {
+    if (!token || !clientId || !broadcasterId) {
       setEstado('inactivo')
       return
     }
@@ -151,7 +179,7 @@ export function useTwitchEventSub({ token, broadcasterId, rewardId, onCanje }: O
       wsRef.current?.close()
       wsRef.current = null
     }
-  }, [token, broadcasterId, conectar])
+  }, [token, clientId, broadcasterId, conectar])
 
   return { estado, error }
 }
