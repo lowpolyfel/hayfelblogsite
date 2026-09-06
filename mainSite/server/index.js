@@ -62,8 +62,19 @@ app.use(express.static(DIST, { index: false, maxAge: '1h' }))
 // Todo lo demás lo resuelve el router del navegador: /ruleta/panel y
 // compañía no son archivos, así que se devuelve el index y ya decide React.
 app.get(/^(?!\/api\/).*/, (_req, res) => {
+  const index = path.join(DIST, 'index.html')
+  // Sin build no hay nada que servir. Se dice con todas las letras: el
+  // ENOENT en crudo no le cuenta a nadie qué hacer.
+  if (!fs.existsSync(index)) {
+    return res.status(503).type('text/plain').send(
+      'El sitio no está construido: falta dist/index.html.\n\n' +
+      'El servidor arranca con "npm start", que ejecuta el build antes de\n' +
+      'levantarse. Si ves esto, ese paso no llegó a correr: revisa el\n' +
+      'registro del despliegue en Hostinger.\n',
+    )
+  }
   res.set('Cache-Control', 'no-store')
-  res.sendFile(path.join(DIST, 'index.html'))
+  res.sendFile(index)
 })
 
 // ---------------------------------------------------------------------------
