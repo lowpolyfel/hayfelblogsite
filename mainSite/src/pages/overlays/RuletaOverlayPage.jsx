@@ -23,7 +23,6 @@ export function RuletaOverlayPage() {
     adoptarConfigDeUrl()
     return {
       token: almacen.token,
-      clientId: almacen.clientId,
       broadcasterId: almacen.broadcasterId,
       rewardId: almacen.rewardId,
       premios: almacen.premios.length ? almacen.premios : premiosPorDefecto(),
@@ -66,7 +65,6 @@ export function RuletaOverlayPage() {
 
   const { estado, error } = useTwitchEventSub({
     token: cfg.token,
-    clientId: cfg.clientId,
     broadcasterId: cfg.broadcasterId,
     rewardId: cfg.rewardId,
     onCanje: alCanjear,
@@ -79,7 +77,7 @@ export function RuletaOverlayPage() {
     return () => clearTimeout(t)
   }, [alCanjear])
 
-  const faltaConfig = !cfg.token || !cfg.clientId || !cfg.broadcasterId
+  const faltaConfig = !cfg.token || !cfg.broadcasterId
 
   return (
     <div className="ruleta-ov">

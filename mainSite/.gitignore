@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Variables locales (VITE_TWITCH_CLIENT_ID y demás): no van al repositorio
+.env
+.env.local
+.env.*.local

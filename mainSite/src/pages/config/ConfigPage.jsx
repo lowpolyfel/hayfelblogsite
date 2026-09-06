@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { GEMAS, premiosPorDefecto } from '../../features/ruleta/gemas'
 import { obtenerRecompensas, obtenerUsuario } from '../../services/api/twitch/twitchApi'
-import { uriDeRedireccion, urlDeAutorizacion } from '../../services/api/twitch/twitchAuth'
+import { hayClientId, uriDeRedireccion, urlDeAutorizacion } from '../../services/api/twitch/twitchAuth'
 import { almacen, urlDelWidget } from '../../services/api/twitch/twitchStorage'
 import './config.css'
 
 // Panel de ajustes de la ruleta. Todo pasa en el navegador: no hay servidor,
 // así que se usa Implicit Grant y el token se queda aquí.
 export function ConfigPage() {
-  const [clientId, setClientId] = useState(() => almacen.clientId)
   const [token, setToken] = useState(() => almacen.token)
   const [usuario, setUsuario] = useState(() =>
     almacen.broadcasterId ? { id: almacen.broadcasterId, display_name: almacen.broadcasterLogin } : null)
@@ -30,15 +29,15 @@ export function ConfigPage() {
     if (err) setAviso(`Twitch rechazó el permiso: ${err}`)
   }, [])
 
-  const cargarDatos = useCallback(async (tk, cid) => {
+  const cargarDatos = useCallback(async (tk) => {
     setCargando(true)
     setAviso('')
     try {
-      const u = await obtenerUsuario(tk, cid)
+      const u = await obtenerUsuario(tk)
       almacen.broadcasterId = u.id
       almacen.broadcasterLogin = u.display_name || u.login
       setUsuario(u)
-      const r = await obtenerRecompensas(tk, cid, u.id)
+      const r = await obtenerRecompensas(tk, u.id)
       setRecompensas(r)
       if (!r.length) {
         setAviso('La cuenta no tiene recompensas de puntos de canal. Créalas en Twitch (hace falta ser afiliado o socio) y recarga.')
@@ -59,14 +58,15 @@ export function ConfigPage() {
   }, [])
 
   useEffect(() => {
-    if (token && clientId && !usuario) cargarDatos(token, clientId)
+    if (token && !usuario) cargarDatos(token)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, clientId])
+  }, [token])
 
   function entrar() {
-    if (!clientId.trim()) { setAviso('Primero pega el Client ID de tu aplicación de Twitch.'); return }
-    almacen.clientId = clientId.trim()
-    window.location.href = urlDeAutorizacion(clientId.trim())
+    // La marca sobrevive al viaje a Twitch y sirve para volver aquí aunque
+    // el hash se pierda por el camino.
+    almacen.volviendoDeLogin = true
+    window.location.href = urlDeAutorizacion()
   }
 
   function salir() {
@@ -88,7 +88,7 @@ export function ConfigPage() {
     almacen.premios = copia
   }
 
-  const listo = Boolean(token && clientId && usuario && rewardId)
+  const listo = Boolean(token && usuario && rewardId)
   const enlace = listo ? urlDelWidget(premios) : ''
 
   async function copiar() {
@@ -111,33 +111,36 @@ export function ConfigPage() {
       <main className="cfg-main">
         {aviso && <p className="cfg-aviso">{aviso}</p>}
 
-        {/* ---------- 1. aplicación ---------- */}
+        {/* ---------- 1. entrar ---------- */}
         <section className="cfg-card">
-          <h2><i>1</i> Tu aplicación de Twitch</h2>
-          <p className="cfg-nota">
-            Crea una aplicación en <a href="https://dev.twitch.tv/console/apps" target="_blank" rel="noreferrer">dev.twitch.tv/console/apps</a>,
-            con tipo <b>Public</b>, y registra exactamente esta URL de redirección:
-          </p>
-          <code className="cfg-code">{uriDeRedireccion()}</code>
+          <h2><i>1</i> Entra con Twitch</h2>
 
-          <label className="cfg-label" htmlFor="cid">Client ID</label>
-          <input
-            id="cid" className="cfg-input" value={clientId} spellCheck={false}
-            onChange={(e) => setClientId(e.target.value)}
-            placeholder="pega aquí el Client ID"
-          />
-
-          <div className="cfg-acciones">
-            <button className="cfg-btn primario" onClick={entrar}>
-              {token ? 'Volver a entrar con Twitch' : 'Entrar con Twitch'}
-            </button>
-            {token && <button className="cfg-btn" onClick={salir}>Cerrar sesión</button>}
-          </div>
-
-          {usuario && (
-            <p className="cfg-ok">
-              Conectado como <b>{usuario.display_name}</b> · ID {usuario.id}
-            </p>
+          {hayClientId() ? (
+            <>
+              <div className="cfg-acciones">
+                <button className="cfg-btn primario grande" onClick={entrar}>
+                  {token ? 'Volver a entrar con Twitch' : 'Entrar con Twitch'}
+                </button>
+                {token && <button className="cfg-btn" onClick={salir}>Cerrar sesión</button>}
+              </div>
+              {usuario && (
+                <p className="cfg-ok">Conectado como <b>{usuario.display_name}</b> · ID {usuario.id}</p>
+              )}
+            </>
+          ) : (
+            /* Sin Client ID no hay OAuth posible: Twitch lo exige. Se pide una
+               sola vez, en el código, y esta tarjeta desaparece para siempre. */
+            <>
+              <p className="cfg-aviso">
+                Falta configurar el Client ID de la aplicación. Es cosa de una vez.
+              </p>
+              <ol className="cfg-pasos">
+                <li>Crea una aplicación en <a href="https://dev.twitch.tv/console/apps" target="_blank" rel="noreferrer">dev.twitch.tv/console/apps</a>, tipo <b>Public</b>.</li>
+                <li>Pon exactamente esta URL de redirección:<code className="cfg-code">{uriDeRedireccion()}</code></li>
+                <li>Copia el Client ID y ponlo en un archivo <code>.env</code> junto al <code>package.json</code>:<code className="cfg-code">VITE_TWITCH_CLIENT_ID=tu_client_id</code></li>
+                <li>Reinicia el servidor y vuelve aquí. Este paso se convierte en un botón y no vuelve a aparecer.</li>
+              </ol>
+            </>
           )}
         </section>
 
@@ -156,7 +159,7 @@ export function ConfigPage() {
                   </option>
                 ))}
               </select>
-              <button className="cfg-btn" onClick={() => cargarDatos(token, clientId)}>Recargar lista</button>
+              <button className="cfg-btn" onClick={() => cargarDatos(token)}>Recargar lista</button>
             </>
           )}
         </section>
