@@ -43,7 +43,14 @@ interface Opciones {
   token: string
   clientId: string
   broadcasterId: string
-  /** Solo se avisa de los canjes de esta recompensa. Vacío = todas. */
+  /**
+   * Solo se avisa de los canjes de esta recompensa.
+   *
+   * Vacío = NINGUNA, no "todas". Cada widget escucha lo mismo de Twitch y se
+   * queda con lo suyo, así que aceptar todo cuando no hay recompensa
+   * asignada hacía que un widget sin configurar reaccionara a los canjes de
+   * los demás: se mandaba un mensaje de voz y giraba la ruleta.
+   */
   rewardId?: string
   onCanje: (canje: Canje) => void
 }
@@ -137,7 +144,10 @@ export function useTwitchEventSub({ token, clientId, broadcasterId, rewardId, on
         if (msg.payload?.subscription?.type !== EVENT_REDENCION) return
         const e = msg.payload.event
         const filtro = rewardRef.current
-        if (filtro && e?.reward?.id !== filtro) return
+        // Sin recompensa asignada no hay nada que hacer, y desde luego no
+        // atender la de otro widget.
+        if (!filtro) return
+        if (e?.reward?.id !== filtro) return
         onCanjeRef.current({
           id: e?.id ?? '',
           rewardId: e?.reward?.id ?? '',
