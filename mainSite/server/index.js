@@ -2,9 +2,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import express from 'express'
+import { asegurarBuild } from './asegurarBuild.js'
 import { configIncompleta, env } from './env.js'
 import { rutas } from './rutas.js'
 import { usuarioDeLaSesion } from './sesion.js'
+
+// Antes de nada: el hosting ejecuta este archivo directamente, así que si el
+// sitio no está construido nadie lo va a construir por nosotros.
+asegurarBuild()
 
 const aqui = path.dirname(fileURLToPath(import.meta.url))
 const DIST = path.join(aqui, '..', 'dist')
