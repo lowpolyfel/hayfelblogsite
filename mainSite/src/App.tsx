@@ -6,6 +6,8 @@ import { CalendarioPage } from './pages/calendario/CalendarioPage'
 import { OverlaysPage } from './pages/overlays/OverlaysPage'
 import { WavesPage } from './pages/waves/WavesPage'
 import { WavesLegacyPage } from './pages/waves/WavesLegacyPage'
+import { RuletaOverlayPage } from './pages/overlays/RuletaOverlayPage'
+import { ConfigPage } from './pages/config/ConfigPage'
 import { TornFilters } from './shared/ui/TornPaper'
 
 // Ruteo mínimo por hash, sin dependencias nuevas: redes en #redes,
@@ -16,6 +18,10 @@ import { TornFilters } from './shared/ui/TornPaper'
 // aparecen en ningún menú ni enlace: son secciones ocultas. A los overlays
 // se llega picando cinco veces el logo de la barra del inicio; a waves,
 // seis veces el HAYFEL grande del centro de la portada.
+//
+// #overlays/ruleta es el widget de la ruleta para el Browser Source de OBS y
+// #config su panel de ajustes. Van por hash como todo lo demás: el hosting
+// es estático y no hay rutas de servidor que configurar.
 function useHash() {
   const [hash, setHash] = useState(() => window.location.hash)
   useEffect(() => {
@@ -28,19 +34,24 @@ function useHash() {
 
 export default function App() {
   const hash = useHash()
+  // #config puede llevar cola (#config?error=...), así que se compara la
+  // ruta sin los parámetros.
+  const ruta = hash.split('?')[0]
 
   // Al cambiar de página el scroll vuelve arriba: si no, se entra a #redes
   // a media altura por el scroll que traía la página anterior.
   useEffect(() => { window.scrollTo(0, 0) }, [hash])
 
   let page
-  if (hash === '#legacy') page = <LegacyPage />
-  else if (hash === '#redes') page = <RedesPage />
-  else if (hash === '#calendario') page = <CalendarioPage />
-  else if (hash === '#overlays') page = <OverlaysPage variant="intro" />
-  else if (hash === '#overlays-fin') page = <OverlaysPage variant="outro" />
-  else if (hash === '#waves') page = <WavesPage />
-  else if (hash === '#waves-2') page = <WavesLegacyPage />
+  if (ruta === '#legacy') page = <LegacyPage />
+  else if (ruta === '#redes') page = <RedesPage />
+  else if (ruta === '#calendario') page = <CalendarioPage />
+  else if (ruta === '#overlays') page = <OverlaysPage variant="intro" />
+  else if (ruta === '#overlays-fin') page = <OverlaysPage variant="outro" />
+  else if (ruta === '#overlays/ruleta') page = <RuletaOverlayPage />
+  else if (ruta === '#config') page = <ConfigPage />
+  else if (ruta === '#waves') page = <WavesPage />
+  else if (ruta === '#waves-2') page = <WavesLegacyPage />
   else page = <ScrapbookPage />
 
   return (
