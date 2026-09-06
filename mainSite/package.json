@@ -11,7 +11,8 @@
     "start": "node server/index.js",
     "dev:server": "node --watch server/index.js",
     "build:prod": "vite build",
-    "prestart": "npm run build:prod"
+    "prestart": "npm run build:prod",
+    "postinstall": "vite build"
   },
   "dependencies": {
     "express": "^5.2.1",
