@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Marco, Migas } from './Marco'
-import { URL_ENTRAR, quienSoy } from '../../services/api/ruleta'
+import { Marco } from './Marco'
+import { URL_ENTRAR, quienSoy } from '../../services/api/puntos'
 
-// Página 1 de 4: entrar con Twitch.
-//
-// Si ya hay sesión, no tiene sentido quedarse aquí: manda al panel. Eso es
-// lo que hace que "la siguiente página ya salga iniciada".
+// Entrada al panel. Si ya hay sesión no tiene sentido quedarse aquí: manda
+// al panel directo, que es lo que hace que la siguiente página ya salga
+// iniciada sin volver a pasar por Twitch.
 export function EntrarPage() {
   const [comprobando, setComprobando] = useState(true)
   const [error, setError] = useState(
@@ -15,16 +14,17 @@ export function EntrarPage() {
   useEffect(() => {
     let vivo = true
     quienSoy()
-      .then((s) => { if (vivo && s.sesion) window.location.replace('/ruleta/panel') })
+      .then((s) => { if (vivo && s.sesion) window.location.replace('/puntos') })
       .catch(() => {})
       .finally(() => { if (vivo) setComprobando(false) })
     return () => { vivo = false }
   }, [])
 
   return (
-    <Marco paso="1 de 3" titulo="Entra con Twitch">
-      <Migas actual="entrar" />
-
+    <Marco
+      titulo="Panel de puntos de canal"
+      sub="La ruleta y el lector de voz, en un solo sitio."
+    >
       {error && <p className="rp-aviso">{error}</p>}
 
       <p className="rp-nota">
@@ -40,8 +40,8 @@ export function EntrarPage() {
       )}
 
       <p className="rp-nota tenue">
-        Solo hay que hacerlo una vez. A partir de ahí la sesión se mantiene y el
-        widget de OBS se renueva solo.
+        Solo hay que hacerlo una vez. A partir de ahí la sesión se mantiene y los
+        enlaces de OBS se renuevan solos.
       </p>
     </Marco>
   )

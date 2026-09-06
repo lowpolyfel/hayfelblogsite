@@ -7,6 +7,7 @@ import {
 import { abrirSesion, cerrarSesion, comprobarState, exigirSesion, ponerState } from './sesion.js'
 import { tokenFresco, olvidarToken } from './tokens.js'
 import { SCOPE, intercambiarCodigo, obtenerRecompensas, obtenerUsuario, urlDeAutorizacion } from './twitch.js'
+import { normalizarAjustesVoz } from './voz.js'
 
 export const rutas = express.Router()
 
@@ -28,7 +29,7 @@ rutas.get('/auth/login', (req, res) => {
 rutas.get('/auth/callback', async_(async (req, res) => {
   const { code, state, error, error_description: detalle } = req.query
 
-  const alPanel = (msg) => res.redirect(`/ruleta/entrar?error=${encodeURIComponent(msg)}`)
+  const alPanel = (msg) => res.redirect(`/puntos/entrar?error=${encodeURIComponent(msg)}`)
 
   if (error) return alPanel(detalle || error)
   if (!code) return alPanel('Twitch no devolvió el código de autorización')
@@ -42,7 +43,7 @@ rutas.get('/auth/callback', async_(async (req, res) => {
   // La aplicación está cerrada a un canal: si no, cualquiera con cuenta de
   // Twitch podría usarla y acabaríamos guardando sus tokens.
   if (env.canalPermitido && usuario.login.toLowerCase() !== env.canalPermitido) {
-    return alPanel(`Esta ruleta es solo del canal ${env.canalPermitido}`)
+    return alPanel(`Este panel es solo del canal ${env.canalPermitido}`)
   }
 
   await guardarSesion({
@@ -54,7 +55,7 @@ rutas.get('/auth/callback', async_(async (req, res) => {
   })
   olvidarToken(usuario.id)
   abrirSesion(res, usuario.id)
-  res.redirect('/ruleta/panel')
+  res.redirect('/puntos')
 }))
 
 rutas.post('/auth/logout', (req, res) => {
@@ -75,9 +76,16 @@ rutas.get('/me', async_(async (req, res) => {
     sesion: true,
     login: u.twitch_login,
     displayName: u.display_name,
-    rewardId: u.reward_id,
-    premios: u.premios?.length === 8 ? u.premios : PREMIOS_POR_DEFECTO,
-    widgetUrl: `${env.publicUrl}/ruleta/overlay?k=${u.widget_key}`,
+    ruleta: {
+      rewardId: u.reward_id,
+      premios: u.premios?.length === 8 ? u.premios : PREMIOS_POR_DEFECTO,
+      widgetUrl: `${env.publicUrl}/overlay/ruleta?k=${u.widget_key}`,
+    },
+    voz: {
+      rewardId: u.reward_tts_id,
+      ajustes: normalizarAjustesVoz(u.tts_ajustes),
+      widgetUrl: `${env.publicUrl}/overlay/voz?k=${u.widget_key}`,
+    },
   })
 }))
 
@@ -93,24 +101,42 @@ rutas.get('/rewards', exigirSesion, async_(async (req, res) => {
 /* ============================ CONFIG ============================ */
 
 rutas.put('/config', exigirSesion, async_(async (req, res) => {
-  const { rewardId, premios } = req.body ?? {}
+  const { rewardId, premios, rewardTtsId, ttsAjustes } = req.body ?? {}
 
   if (premios !== undefined) {
     const bien = Array.isArray(premios) && premios.length === 8
       && premios.every((p) => typeof p === 'string' && p.length <= 60)
     if (!bien) return res.status(400).json({ error: 'Los premios tienen que ser ocho textos de 60 caracteres o menos' })
   }
-  if (rewardId !== undefined && rewardId !== null && typeof rewardId !== 'string') {
-    return res.status(400).json({ error: 'rewardId inválido' })
+  for (const [nombre, valor] of [['rewardId', rewardId], ['rewardTtsId', rewardTtsId]]) {
+    if (valor !== undefined && valor !== null && typeof valor !== 'string') {
+      return res.status(400).json({ error: `${nombre} inválido` })
+    }
+  }
+  // Una misma recompensa no puede hacer dos cosas: girar y hablar a la vez
+  // dejaría la ruleta narrando encima de sí misma.
+  const finalRuleta = rewardId !== undefined ? rewardId : undefined
+  const finalVoz = rewardTtsId !== undefined ? rewardTtsId : undefined
+  if (finalRuleta && finalVoz && finalRuleta === finalVoz) {
+    return res.status(400).json({ error: 'La ruleta y la voz no pueden usar la misma recompensa' })
   }
 
-  const u = await guardarConfig(req.twitchUserId, { rewardId, premios })
-  res.json({ rewardId: u?.reward_id ?? null, premios: u?.premios ?? PREMIOS_POR_DEFECTO })
+  const u = await guardarConfig(req.twitchUserId, {
+    rewardId, premios, rewardTtsId,
+    ttsAjustes: ttsAjustes === undefined ? undefined : normalizarAjustesVoz(ttsAjustes),
+  })
+  res.json({
+    ruleta: { rewardId: u?.reward_id ?? null, premios: u?.premios ?? PREMIOS_POR_DEFECTO },
+    voz: { rewardId: u?.reward_tts_id ?? null, ajustes: normalizarAjustesVoz(u?.tts_ajustes) },
+  })
 }))
 
 rutas.post('/widget-key/rotar', exigirSesion, async_(async (req, res) => {
   const u = await rotarWidgetKey(req.twitchUserId)
-  res.json({ widgetUrl: `${env.publicUrl}/ruleta/overlay?k=${u.widget_key}` })
+  res.json({
+    ruletaUrl: `${env.publicUrl}/overlay/ruleta?k=${u.widget_key}`,
+    vozUrl: `${env.publicUrl}/overlay/voz?k=${u.widget_key}`,
+  })
 }))
 
 rutas.delete('/cuenta', exigirSesion, async_(async (req, res) => {
@@ -145,8 +171,15 @@ rutas.get('/widget/:clave', async_(async (req, res) => {
     accessToken: token,
     clientId: env.clientId,
     broadcasterId: u.twitch_user_id,
-    rewardId: u.reward_id,
-    premios: u.premios?.length === 8 ? u.premios : PREMIOS_POR_DEFECTO,
+    // Los dos widgets comparten clave y respuesta: cada uno coge lo suyo.
+    ruleta: {
+      rewardId: u.reward_id,
+      premios: u.premios?.length === 8 ? u.premios : PREMIOS_POR_DEFECTO,
+    },
+    voz: {
+      rewardId: u.reward_tts_id,
+      ajustes: normalizarAjustesVoz(u.tts_ajustes),
+    },
     // Cuándo volver a pedir. El widget se relee solo, sin recargar OBS.
     revalidarEnSegundos: 45 * 60,
   })
