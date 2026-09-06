@@ -9,20 +9,22 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "start": "node server/index.js",
-    "dev:server": "node --watch server/index.js"
+    "dev:server": "node --watch server/index.js",
+    "build:prod": "vite build",
+    "prestart": "npm run build:prod"
   },
   "dependencies": {
     "express": "^5.2.1",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
-  },
-  "devDependencies": {
-    "@types/node": "^24.13.3",
+    "react-dom": "^19.2.8",
+    "vite": "^8.2.0",
+    "typescript": "~6.0.2",
+    "@vitejs/plugin-react": "^6.0.4",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.4",
-    "oxlint": "^1.75.0",
-    "typescript": "~6.0.2",
-    "vite": "^8.2.0"
+    "@types/node": "^24.13.3"
+  },
+  "devDependencies": {
+    "oxlint": "^1.75.0"
   }
 }
