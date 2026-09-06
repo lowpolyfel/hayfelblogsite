@@ -115,10 +115,19 @@ rutas.put('/config', exigirSesion, async_(async (req, res) => {
   }
   // Una misma recompensa no puede hacer dos cosas: girar y hablar a la vez
   // dejaría la ruleta narrando encima de sí misma.
-  const finalRuleta = rewardId !== undefined ? rewardId : undefined
-  const finalVoz = rewardTtsId !== undefined ? rewardTtsId : undefined
-  if (finalRuleta && finalVoz && finalRuleta === finalVoz) {
-    return res.status(400).json({ error: 'La ruleta y la voz no pueden usar la misma recompensa' })
+  //
+  // Se compara contra lo que ya hay guardado, no solo contra lo que llega en
+  // esta petición: el panel guarda cada desplegable por separado, así que
+  // mirar únicamente el cuerpo dejaba pasar la repetición en dos pasos.
+  if (rewardId !== undefined || rewardTtsId !== undefined) {
+    const actual = await buscarPorId(req.twitchUserId)
+    const finalRuleta = rewardId !== undefined ? (rewardId || null) : (actual?.reward_id ?? null)
+    const finalVoz = rewardTtsId !== undefined ? (rewardTtsId || null) : (actual?.reward_tts_id ?? null)
+    if (finalRuleta && finalVoz && finalRuleta === finalVoz) {
+      return res.status(400).json({
+        error: 'Esa recompensa ya está asignada a la otra función. Elige una distinta o pon la otra en «apagado».',
+      })
+    }
   }
 
   const u = await guardarConfig(req.twitchUserId, {
