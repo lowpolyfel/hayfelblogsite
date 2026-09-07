@@ -53,9 +53,13 @@ export function RuletaOverlay() {
     onCanje: alCanjear,
   })
 
-  // Prueba sin gastar puntos: añade &demo=1 al enlace.
+  // Prueba sin gastar puntos: añade &demo=1 al enlace. Una sola vez por
+  // carga: `cfg` se renueva al pedir token fresco, y sin cerrojo cada
+  // renovación lanzaba otro giro.
+  const demoHecha = useRef(false)
   useEffect(() => {
-    if (!cfg || !bandera('demo')) return
+    if (!cfg || !bandera('demo') || demoHecha.current) return
+    demoHecha.current = true
     const t = setTimeout(alCanjear, 600)
     return () => clearTimeout(t)
   }, [cfg, alCanjear])
