@@ -14,7 +14,8 @@ export function WavesPage() {
       <HiddenTools
         links={[
           { href: '#', label: '← salir' },
-          { href: '#waves-2', label: 'ver v2' },
+          { href: '#waves-2', label: 'ver estrellas' },
+          { href: '#waves-3', label: 'ver malla' },
         ]}
       />
     </div>
