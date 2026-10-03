@@ -81,3 +81,8 @@
 @media (prefers-reduced-motion:reduce){
   .wv-crt::after{ animation:none; }
 }
+
+/* ---------- waves 3: la malla que respira ---------- */
+/* El componente trae su propio fondo y su botón de claro/oscuro; aquí solo
+   se asegura que llene el hueco sin dejar que asome el negro de .wv */
+.wv-soul > div{ height:100%; }

@@ -42,6 +42,7 @@ export function WavesLegacyPage() {
         links={[
           { href: '#', label: '← salir' },
           { href: '#waves', label: 'ver olas' },
+          { href: '#waves-3', label: 'ver malla' },
         ]}
       />
     </div>

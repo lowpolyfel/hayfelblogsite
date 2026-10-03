@@ -6,6 +6,7 @@ import { CalendarioPage } from './pages/calendario/CalendarioPage'
 import { OverlaysPage } from './pages/overlays/OverlaysPage'
 import { WavesPage } from './pages/waves/WavesPage'
 import { WavesLegacyPage } from './pages/waves/WavesLegacyPage'
+import { SoulWavesPage } from './pages/waves/SoulWavesPage'
 import { EntrarPage } from './pages/puntos/EntrarPage'
 import { PanelPage } from './pages/puntos/PanelPage'
 import { RuletaPage } from './pages/puntos/RuletaPage'
@@ -88,6 +89,7 @@ export default function App() {
   else if (seccion === '#overlays-fin') page = <OverlaysPage variant="outro" />
   else if (seccion === '#waves') page = <WavesPage />
   else if (seccion === '#waves-2') page = <WavesLegacyPage />
+  else if (seccion === '#waves-3') page = <SoulWavesPage />
   else page = <ScrapbookPage />
 
   return (
