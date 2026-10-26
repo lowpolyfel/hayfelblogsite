@@ -1,22 +1,23 @@
 # Bases de datos (MySQL / MariaDB en Hostinger)
 
-Seis bases de datos, cada una para una cosa. Así ninguna se acerca al límite
+Siete bases de datos, cada una para una cosa. Así ninguna se acerca al límite
 de 3 GB, y si una se llena o se rompe, las demás siguen funcionando.
 
 | # | Base de datos (sugerida) | Script | Qué guarda |
 |---|---|---|---|
-| 1 | `u…_nucleo` | `01_nucleo.sql` | Tu cuenta, sesiones, intentos de login, ajustes del sitio, ruleta/voz de Twitch |
+| 1 | `u…_nucleo` | `01_nucleo.sql` | Tu cuenta, sesiones, intentos de login, ajustes del sitio |
 | 2 | `u…_blog` | `02_blog.sql` | Posts, revisiones, categorías, etiquetas, comentarios, páginas, blogroll, libro de visitas |
 | 3 | `u…_agenda` | `03_agenda.sql` | Calendarios, eventos (con repetición), tareas, recordatorios, notas |
 | 4 | `u…_medios` | `04_medios.sql` | Catálogo de imágenes: nombre, medidas, álbum, texto alternativo (sin los bytes) |
 | 5 | `u…_medios_01` | `05_medios_datos.sql` | Los bytes de las imágenes. Cuando se llene: `u…_medios_02` con el mismo script |
 | 6 | `u…_registro` | `06_registro.sql` | Contador de visitas, errores del servidor, bitácora del panel |
+| 7 | `u…_twitch` | `07_twitch.sql` | Tu canal conectado, widgets de OBS, alertas, recompensas de puntos (ruleta, voz, sonidos), historial de eventos, metas, comandos de chat, directos |
 
 `u…` es el prefijo que Hostinger le pone a todo (algo como `u123456789_`).
 
 ## Cómo crearlas
 
-1. **hPanel → Bases de datos → Administración.** Crea las 6 bases. A cada
+1. **hPanel → Bases de datos → Administración.** Crea las 7 bases. A cada
    una ponle un usuario y una contraseña, y apúntalos: el servidor los va a
    necesitar.
 2. Abre **phpMyAdmin** en la primera, ve a la pestaña **SQL**, pega el
