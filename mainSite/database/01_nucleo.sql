@@ -1,5 +1,5 @@
 -- ============================================================================
--- NÚCLEO · cuenta, sesiones, ajustes del sitio y lo que venía de Supabase
+-- NÚCLEO · tu cuenta, sesiones y ajustes del sitio
 --
 -- Base sugerida en hPanel: u000000000_nucleo
 -- Se ejecuta en phpMyAdmin con esta base seleccionada (pestaña SQL).
@@ -90,27 +90,8 @@ INSERT IGNORE INTO ajuste (clave, valor) VALUES
   ('libro_visitas.abierto',   'true');
 
 -- ---------------------------------------------------------------------------
--- Ruleta y lector de voz de Twitch. Es la misma tabla que había en
--- Supabase (supabase/migrations/0001 y 0002), traducida a MySQL, para que
--- todo viva en el mismo hosting.
+-- La ruleta y el lector de voz ya no viven aquí: todo lo de Twitch está en
+-- su propia base (07_twitch.sql). Si ya habías ejecutado una versión
+-- anterior de este script, esto quita la tabla vieja, que estaba vacía.
 -- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS ruleta_usuario (
-  twitch_user_id  VARCHAR(32)  NOT NULL,
-  twitch_login    VARCHAR(64)  NOT NULL,
-  display_name    VARCHAR(64)  NULL,
-  -- Secreto: solo lo lee el servidor
-  refresh_token   VARCHAR(255) NOT NULL,
-  scope           VARCHAR(255) NOT NULL DEFAULT 'channel:read:redemptions',
-  reward_id       VARCHAR(64)  NULL,
-  premios         JSON         NOT NULL DEFAULT ('["Gema cian","Gema verde","Gema amarilla","Gema naranja","Gema roja","Gema rosa","Gema morada","Gema azul"]'),
-  -- Lo único que viaja en la URL de OBS
-  widget_key      CHAR(36)     NOT NULL DEFAULT (UUID()),
-  reward_tts_id   VARCHAR(64)  NULL,
-  tts_ajustes     JSON         NOT NULL DEFAULT ('{"voz":"","velocidad":1,"tono":1,"volumen":1,"maxCaracteres":200,"leerNombre":true,"colapsarRepetidos":true,"bloqueadas":[]}'),
-  creado_en       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  actualizado_en  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (twitch_user_id),
-  UNIQUE KEY uq_ruleta_widget (widget_key),
-  -- Ocho gajos: ni uno más ni uno menos
-  CONSTRAINT premios_son_ocho CHECK (JSON_TYPE(premios) = 'ARRAY' AND JSON_LENGTH(premios) = 8)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS ruleta_usuario;
